@@ -20,7 +20,7 @@ export function SaleForm({ open, onClose, product: preProduct }: Props) {
   const { data: partners = [] } = usePartners();
   const create = useCreateSale();
 
-  const { register, handleSubmit, reset, watch, formState: { errors } } = useForm<SaleCreate & { _product_id_str: string }>();
+  const { register, handleSubmit, reset, watch, formState: { errors } } = useForm<SaleCreate & { _product_id_str: string; _partner_id_str: string }>();
 
   useEffect(() => {
     if (open) reset({ product_id: preProduct?.id, _product_id_str: String(preProduct?.id ?? ""), quantity_sold: 1 });

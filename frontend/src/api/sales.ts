@@ -18,6 +18,7 @@ export interface Sale {
 export interface SaleCreate {
   product_id: number;
   quantity_sold: number;
+  partner_id?: number;
   notes?: string;
 }
 

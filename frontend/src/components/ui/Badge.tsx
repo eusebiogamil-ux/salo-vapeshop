@@ -7,9 +7,9 @@ const styles: Record<Variant, string> = {
   gray: "bg-gray-100 text-gray-600",
 };
 
-export function Badge({ children, variant = "gray" }: { children: React.ReactNode; variant?: Variant }) {
+export function Badge({ children, variant = "gray", className = "" }: { children: React.ReactNode; variant?: Variant; className?: string }) {
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${styles[variant]}`}>
+    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${styles[variant]} ${className}`}>
       {children}
     </span>
   );
