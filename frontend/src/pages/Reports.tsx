@@ -10,18 +10,18 @@ export default function Reports() {
   return (
     <div className="space-y-8 max-w-7xl">
       <div>
-        <h1 className="text-3xl font-black text-gray-900 tracking-tight">Reports</h1>
-        <p className="text-base text-gray-500 mt-1">Inventory and sales insights</p>
+        <h1 className="text-3xl font-black text-slate-100 tracking-tight">Reports</h1>
+        <p className="text-sm text-slate-500 mt-1">Inventory and sales insights</p>
       </div>
 
       <section className="space-y-3">
-        <h2 className="text-xl font-bold text-gray-800">Inventory Summary</h2>
+        <h2 className="text-xl font-bold text-slate-200">Inventory Summary</h2>
         <InventorySummary />
       </section>
 
       <section className="space-y-3">
         <div className="flex items-end gap-4">
-          <h2 className="text-xl font-bold text-gray-800">Sales History</h2>
+          <h2 className="text-xl font-bold text-slate-200">Sales History</h2>
           <div className="flex items-end gap-2 ml-auto">
             <Input
               label="From"

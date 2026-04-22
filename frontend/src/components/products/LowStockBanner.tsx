@@ -5,13 +5,11 @@ export function LowStockBanner({ products }: { products: Product[] }) {
   if (low.length === 0) return null;
 
   return (
-    <div className="bg-yellow-50 border border-yellow-200 rounded-lg px-4 py-3 mb-4">
-      <p className="text-sm font-medium text-yellow-800 mb-1">⚠️ {low.length} product{low.length > 1 ? "s" : ""} running low on stock</p>
-      <ul className="text-sm text-yellow-700 list-disc list-inside space-y-0.5">
+    <div className="rounded-xl px-5 py-4 border" style={{ background: "#1a0f0f", borderColor: "#7f1d1d" }}>
+      <p className="text-sm font-bold text-red-400 mb-2">⚠️ {low.length} product{low.length > 1 ? "s" : ""} running low on stock</p>
+      <ul className="text-sm text-red-500/80 list-disc list-inside space-y-0.5">
         {low.map((p) => (
-          <li key={p.id}>
-            {p.brand} — {p.name}: <strong>{p.stock_quantity}</strong> left (threshold: {p.low_stock_threshold})
-          </li>
+          <li key={p.id}>{p.brand} — {p.name}: <strong className="text-red-400">{p.stock_quantity}</strong> left (threshold: {p.low_stock_threshold})</li>
         ))}
       </ul>
     </div>

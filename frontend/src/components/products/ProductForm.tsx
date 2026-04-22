@@ -59,7 +59,7 @@ export function ProductForm({ open, onClose, product }: Props) {
           <Input label="Stock Quantity *" type="number" min="0" {...register("stock_quantity", { required: "Required" })} error={errors.stock_quantity?.message} />
           <Input label="Low Stock Threshold" type="number" min="0" {...register("low_stock_threshold")} />
         </div>
-        {error && <p className="text-sm text-red-600">{(error as any).response?.data?.detail ?? "An error occurred"}</p>}
+        {error && <p className="text-sm text-red-400">{(error as any).response?.data?.detail ?? "An error occurred"}</p>}
         <div className="flex justify-end gap-2 pt-2">
           <Button type="button" variant="secondary" onClick={onClose}>Cancel</Button>
           <Button type="submit" loading={pending}>{isEdit ? "Save Changes" : "Add Product"}</Button>

@@ -4,48 +4,45 @@ import { Button } from "../ui/Button";
 import { useVoidSale } from "../../hooks/useSales";
 import type { Sale } from "../../api/sales";
 
+const TH = ({ children }: { children: React.ReactNode }) => (
+  <th className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-widest whitespace-nowrap" style={{ color: "#475569" }}>{children}</th>
+);
+
 export function SalesTable({ sales }: { sales: Sale[] }) {
   const voidSale = useVoidSale();
 
-  const handleVoid = (s: Sale) => {
-    if (confirm(`Void sale of ${s.quantity_sold}x ${s.product_name}? Stock will be restored.`)) {
-      voidSale.mutate(s.id);
-    }
-  };
-
   return (
-    <div className="overflow-x-auto rounded-lg border border-gray-200">
-      <table className="min-w-full divide-y divide-gray-200 text-sm">
-        <thead className="bg-gray-50">
+    <div className="rounded-2xl border overflow-hidden" style={{ borderColor: "#1e293b" }}>
+      <table className="min-w-full text-sm">
+        <thead style={{ background: "#0d1424" }}>
           <tr>
-            {["Date", "Product", "Qty", "Unit Price", "Revenue", "Profit", "By", "Notes", ""].map((h) => (
-              <th key={h} className="px-3 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">{h}</th>
-            ))}
+            <TH>Date</TH><TH>Product</TH><TH>Qty</TH><TH>Unit Price</TH>
+            <TH>Revenue</TH><TH>Profit</TH><TH>By</TH><TH>Notes</TH><TH></TH>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-100 bg-white">
+        <tbody style={{ background: "#0a0e1a" }}>
           {sales.length === 0 && (
-            <tr><td colSpan={8} className="px-3 py-8 text-center text-gray-400">No sales recorded yet.</td></tr>
+            <tr><td colSpan={9} className="px-4 py-12 text-center text-slate-600 text-base">No sales recorded yet.</td></tr>
           )}
           {sales.map((s) => {
             const profit = Number(s.total_revenue) - Number(s.total_cost);
             return (
-              <tr key={s.id} className="hover:bg-gray-50">
-                <td className="px-3 py-2 whitespace-nowrap text-gray-500">{format(new Date(s.sold_at), "MMM d, yyyy HH:mm")}</td>
-                <td className="px-3 py-2 whitespace-nowrap">
-                  <span className="font-medium text-gray-900">{s.product_brand}</span>
-                  <span className="text-gray-500 ml-1">— {s.product_name}</span>
+              <tr key={s.id} className="border-t transition-colors hover:bg-white/[0.02]" style={{ borderColor: "#1a2234" }}>
+                <td className="px-4 py-3 whitespace-nowrap text-slate-500 text-xs">{format(new Date(s.sold_at), "MMM d, yyyy HH:mm")}</td>
+                <td className="px-4 py-3 whitespace-nowrap">
+                  <span className="font-bold text-slate-200">{s.product_brand}</span>
+                  <span className="text-slate-500 ml-1">— {s.product_name}</span>
                 </td>
-                <td className="px-3 py-2 text-gray-700">{s.quantity_sold}</td>
-                <td className="px-3 py-2 text-gray-700">₱{Number(s.unit_price).toFixed(2)}</td>
-                <td className="px-3 py-2 font-medium text-gray-900">₱{Number(s.total_revenue).toFixed(2)}</td>
-                <td className="px-3 py-2">
+                <td className="px-4 py-3 text-slate-300 font-semibold">{s.quantity_sold}</td>
+                <td className="px-4 py-3 text-slate-400">₱{Number(s.unit_price).toFixed(2)}</td>
+                <td className="px-4 py-3 font-bold text-emerald-400">₱{Number(s.total_revenue).toFixed(2)}</td>
+                <td className="px-4 py-3">
                   <Badge variant={profit >= 0 ? "green" : "red"}>₱{profit.toFixed(2)}</Badge>
                 </td>
-                <td className="px-3 py-2 font-medium text-indigo-600 whitespace-nowrap">{(s as any).partner_name ?? "—"}</td>
-                <td className="px-3 py-2 text-gray-400 max-w-[140px] truncate">{s.notes ?? "—"}</td>
-                <td className="px-3 py-2">
-                  <Button size="sm" variant="ghost" onClick={() => handleVoid(s)}>Void</Button>
+                <td className="px-4 py-3 font-semibold text-indigo-400 whitespace-nowrap">{(s as any).partner_name ?? "—"}</td>
+                <td className="px-4 py-3 text-slate-600 max-w-[120px] truncate text-xs">{s.notes ?? "—"}</td>
+                <td className="px-4 py-3">
+                  <Button size="sm" variant="ghost" onClick={() => { if (confirm(`Void this sale?`)) voidSale.mutate(s.id); }}>Void</Button>
                 </td>
               </tr>
             );

@@ -4,15 +4,15 @@ type Variant = "primary" | "secondary" | "danger" | "ghost";
 type Size = "sm" | "md";
 
 const variants: Record<Variant, string> = {
-  primary: "bg-indigo-600 text-white hover:bg-indigo-700 disabled:bg-indigo-300",
-  secondary: "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 disabled:opacity-50",
-  danger: "bg-red-600 text-white hover:bg-red-700 disabled:bg-red-300",
-  ghost: "text-gray-600 hover:bg-gray-100 disabled:opacity-50",
+  primary: "bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-40 shadow-lg shadow-indigo-900/40",
+  secondary: "text-slate-300 border border-slate-700 hover:bg-slate-800 hover:text-white disabled:opacity-40",
+  danger: "bg-red-600/20 text-red-400 border border-red-800/50 hover:bg-red-600/30 disabled:opacity-40",
+  ghost: "text-slate-400 hover:bg-slate-800 hover:text-slate-200 disabled:opacity-40",
 };
 
 const sizes: Record<Size, string> = {
-  sm: "px-2.5 py-1 text-xs",
-  md: "px-4 py-2 text-sm",
+  sm: "px-3 py-1.5 text-xs rounded-lg",
+  md: "px-4 py-2 text-sm rounded-xl",
 };
 
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -26,7 +26,7 @@ export function Button({ variant = "primary", size = "md", loading, children, cl
     <button
       {...props}
       disabled={props.disabled || loading}
-      className={`inline-flex items-center gap-1.5 font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 ${variants[variant]} ${sizes[size]} ${className}`}
+      className={`inline-flex items-center gap-1.5 font-semibold transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-900 ${variants[variant]} ${sizes[size]} ${className}`}
     >
       {loading && <span className="w-3.5 h-3.5 rounded-full border-2 border-current border-t-transparent animate-spin" />}
       {children}

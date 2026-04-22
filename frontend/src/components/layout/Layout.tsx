@@ -3,7 +3,7 @@ import { Sidebar } from "./Sidebar";
 
 export function Layout() {
   return (
-    <div className="flex h-screen overflow-hidden" style={{ background: "linear-gradient(135deg, #f0f4ff 0%, #f8fafc 50%, #f0fdf4 100%)" }}>
+    <div className="flex h-screen overflow-hidden" style={{ background: "#080d16" }}>
       <Sidebar />
       <main className="flex-1 overflow-y-auto p-8">
         <Outlet />

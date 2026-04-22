@@ -6,32 +6,16 @@ import { Modal } from "../ui/Modal";
 import { Input } from "../ui/Input";
 import type { Partner } from "../../api/partners";
 
-const avatarGradients = [
-  "from-indigo-500 to-violet-500",
-  "from-violet-500 to-purple-600",
-  "from-cyan-500 to-blue-500",
-];
+const avatarGradients = ["from-indigo-500 to-violet-600", "from-violet-500 to-purple-700", "from-cyan-500 to-blue-600"];
 
 function EditCapitalModal({ partner, onClose }: { partner: Partner; onClose: () => void }) {
   const [value, setValue] = useState(String(partner.capital));
   const update = useUpdateCapital();
-
-  const handleSave = async () => {
-    await update.mutateAsync({ id: partner.id, capital: Number(value) });
-    onClose();
-  };
-
+  const handleSave = async () => { await update.mutateAsync({ id: partner.id, capital: Number(value) }); onClose(); };
   return (
     <Modal open onClose={onClose} title={`Edit Capital — ${partner.name}`}>
       <div className="space-y-4">
-        <Input
-          label="Capital Amount (₱)"
-          type="number"
-          min="0"
-          step="0.01"
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-        />
+        <Input label="Capital Amount (₱)" type="number" min="0" step="0.01" value={value} onChange={(e) => setValue(e.target.value)} />
         <div className="flex justify-end gap-2">
           <Button variant="secondary" onClick={onClose}>Cancel</Button>
           <Button loading={update.isPending} onClick={handleSave}>Save</Button>
@@ -52,61 +36,49 @@ export function PartnersCard() {
   const fairShare = partners.length > 0 ? totalProfit / partners.length : 0;
 
   return (
-    <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-      {/* Header */}
-      <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+    <div className="rounded-2xl border overflow-hidden" style={{ background: "#0a0e1a", borderColor: "#1e293b" }}>
+      <div className="px-6 py-4 border-b flex items-center justify-between" style={{ borderColor: "#1e293b", background: "#0d1424" }}>
         <div>
-          <h2 className="text-sm font-semibold text-gray-800">Partners</h2>
-          <p className="text-xs text-gray-400 mt-0.5">Capital contributions & equal profit share</p>
+          <h2 className="text-base font-bold text-slate-100">Partners</h2>
+          <p className="text-xs text-slate-500 mt-0.5">Equal profit share from all sales</p>
         </div>
         <div className="text-right">
-          <p className="text-xs text-gray-400">Total Capital</p>
-          <p className="text-sm font-bold text-gray-800">₱{totalCapital.toLocaleString("en-PH", { minimumFractionDigits: 2 })}</p>
+          <p className="text-xs text-slate-500">Total Capital</p>
+          <p className="text-base font-black text-slate-200">₱{totalCapital.toLocaleString("en-PH", { minimumFractionDigits: 2 })}</p>
         </div>
       </div>
 
-      {/* Summary bar */}
-      <div className="px-5 py-3 bg-indigo-50/50 border-b border-indigo-100/50 flex items-center justify-between">
-        <span className="text-xs text-indigo-600 font-medium">Total Business Profit</span>
-        <span className={`text-sm font-bold ${totalProfit >= 0 ? "text-emerald-600" : "text-red-500"}`}>
+      <div className="px-6 py-3 border-b flex items-center justify-between" style={{ borderColor: "#1e293b", background: "#0f1929" }}>
+        <span className="text-xs font-semibold text-indigo-400 uppercase tracking-wide">Total Business Profit</span>
+        <span className={`text-base font-black ${totalProfit >= 0 ? "text-emerald-400" : "text-red-400"}`}>
           ₱{totalProfit.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
         </span>
       </div>
 
-      {/* Partners list */}
-      <div className="divide-y divide-gray-50">
+      <div className="divide-y" style={{ divideColor: "#1a2234" }}>
         {partners.map((p, i) => (
-          <div key={p.id} className="flex items-center gap-4 px-5 py-4 hover:bg-gray-50/50 transition-colors">
-            {/* Avatar */}
-            <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${avatarGradients[i % avatarGradients.length]} flex items-center justify-center text-white font-bold text-sm shrink-0 shadow-sm`}>
+          <div key={p.id} className="flex items-center gap-4 px-6 py-4 transition-colors hover:bg-white/[0.02]" style={{ borderColor: "#1a2234", borderTopWidth: i > 0 ? 1 : 0 }}>
+            <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${avatarGradients[i % avatarGradients.length]} flex items-center justify-center text-white font-black text-sm shrink-0 shadow-lg`}>
               {p.name[0]}
             </div>
-
-            {/* Name */}
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-gray-900">{p.name}</p>
-              <p className="text-xs text-gray-400">Equal profit share</p>
+              <p className="text-sm font-bold text-slate-200">{p.name}</p>
+              <p className="text-xs text-slate-600">Equal profit share</p>
             </div>
-
-            {/* Capital */}
             <div className="text-right px-3">
-              <p className="text-[10px] font-medium text-gray-400 uppercase tracking-wide">Capital</p>
-              <p className="text-sm font-semibold text-gray-700">₱{p.capital.toLocaleString("en-PH", { minimumFractionDigits: 2 })}</p>
+              <p className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Capital</p>
+              <p className="text-sm font-bold text-slate-300">₱{p.capital.toLocaleString("en-PH", { minimumFractionDigits: 2 })}</p>
             </div>
-
-            {/* Profit Share */}
             <div className="text-right px-3">
-              <p className="text-[10px] font-medium text-gray-400 uppercase tracking-wide">Profit Share</p>
-              <p className={`text-sm font-bold ${fairShare >= 0 ? "text-emerald-600" : "text-red-500"}`}>
+              <p className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Profit Share</p>
+              <p className={`text-sm font-black ${fairShare >= 0 ? "text-emerald-400" : "text-red-400"}`}>
                 ₱{fairShare.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
               </p>
             </div>
-
             <Button size="sm" variant="secondary" onClick={() => setEditing(p)}>Edit</Button>
           </div>
         ))}
       </div>
-
       {editing && <EditCapitalModal partner={editing} onClose={() => setEditing(null)} />}
     </div>
   );

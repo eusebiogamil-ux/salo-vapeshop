@@ -45,23 +45,24 @@ export function SaleForm({ open, onClose, product: preProduct }: Props) {
     <Modal open={open} onClose={onClose} title="Record Sale">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-700">Product *</label>
+          <label className="text-xs font-bold uppercase tracking-widest" style={{ color: "#475569" }}>Product *</label>
           <select
             {...register("_product_id_str", { required: "Required" })}
-            className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="block w-full rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            style={{ background: "#0d1424", border: "1px solid #1e293b", color: "#e2e8f0" }}
           >
             <option value="">Select a product…</option>
             {products.map((p) => (
               <option key={p.id} value={p.id}>{p.brand} — {p.name} (stock: {p.stock_quantity})</option>
             ))}
           </select>
-          {errors._product_id_str && <p className="text-xs text-red-600">{errors._product_id_str.message}</p>}
+          {errors._product_id_str && <p className="text-xs text-red-400">{errors._product_id_str.message}</p>}
         </div>
 
         {selected && (
-          <div className="bg-gray-50 rounded-lg p-3 text-sm text-gray-600 space-y-0.5">
-            <p>Sell price: <strong>₱{Number(selected.price).toFixed(2)}</strong></p>
-            <p>Available stock: <strong className={selected.is_low_stock ? "text-red-600" : ""}>{selected.stock_quantity}</strong></p>
+          <div className="rounded-lg p-3 text-sm space-y-0.5" style={{ background: "#0f1929", border: "1px solid #1e293b" }}>
+            <p className="text-slate-400">Sell price: <strong className="text-emerald-400">₱{Number(selected.price).toFixed(2)}</strong></p>
+            <p className="text-slate-400">Available stock: <strong className={selected.is_low_stock ? "text-red-400" : "text-slate-200"}>{selected.stock_quantity}</strong></p>
           </div>
         )}
 
@@ -74,10 +75,11 @@ export function SaleForm({ open, onClose, product: preProduct }: Props) {
           error={errors.quantity_sold?.message}
         />
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-700">Recorded by *</label>
+          <label className="text-xs font-bold uppercase tracking-widest" style={{ color: "#475569" }}>Recorded by *</label>
           <select
             {...register("_partner_id_str", { required: "Please select a partner" })}
-            className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="block w-full rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            style={{ background: "#0d1424", border: "1px solid #1e293b", color: "#e2e8f0" }}
           >
             <option value="">Select partner…</option>
             {partners.map((p) => (
@@ -87,7 +89,7 @@ export function SaleForm({ open, onClose, product: preProduct }: Props) {
         </div>
         <Input label="Notes" placeholder="Optional" {...register("notes")} />
 
-        {error && <p className="text-sm text-red-600">{(error as any).response?.data?.detail ?? "An error occurred"}</p>}
+        {error && <p className="text-sm text-red-400">{(error as any).response?.data?.detail ?? "An error occurred"}</p>}
 
         <div className="flex justify-end gap-2 pt-2">
           <Button type="button" variant="secondary" onClick={onClose}>Cancel</Button>

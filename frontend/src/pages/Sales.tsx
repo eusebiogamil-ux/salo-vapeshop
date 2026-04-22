@@ -13,10 +13,15 @@ export default function Sales() {
     <div className="space-y-5 max-w-7xl">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-black text-gray-900 tracking-tight">Sales</h1>
-          <p className="text-base text-gray-500 mt-1">{sales.length} transaction{sales.length !== 1 ? "s" : ""} recorded</p>
+          <h1 className="text-3xl font-black text-slate-100 tracking-tight">Sales</h1>
+          <p className="text-sm text-slate-500 mt-1">{sales.length} transaction{sales.length !== 1 ? "s" : ""} recorded</p>
         </div>
-        <Button onClick={() => setOpen(true)}>+ Record Sale</Button>
+        <button onClick={() => setOpen(true)}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm text-white transition-all hover:opacity-90"
+          style={{ background: "linear-gradient(135deg, #059669, #10b981)" }}>
+          <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Record Sale
+        </button>
       </div>
 
       {isLoading ? (
