@@ -54,7 +54,7 @@ export function PurchaseForm({ open, onClose }: Props) {
           )}
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Input label="Quantity *" type="number" min="1"
             {...register("quantity", { required: "Required", min: { value: 1, message: "Min 1" } })}
             error={errors.quantity?.message} />

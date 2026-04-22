@@ -42,6 +42,7 @@ export function PartnersCard() {
           </strong>
         </span>
       </div>
+      <div className="overflow-x-auto">
       <table className="min-w-full text-sm">
         <thead>
           <tr className="border-b border-gray-50">
@@ -71,6 +72,7 @@ export function PartnersCard() {
           </tr>
         </tbody>
       </table>
+      </div>
       {editing && <EditCapitalModal partner={editing} onClose={() => setEditing(null)} />}
     </div>
   );

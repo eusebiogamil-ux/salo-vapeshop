@@ -41,7 +41,7 @@ export function ProductForm({ open, onClose, product }: Props) {
   return (
     <Modal open={open} onClose={onClose} title={isEdit ? "Edit Product" : "Add Product"} wide>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Input label="Brand *" {...register("brand", { required: "Required" })} error={errors.brand?.message} />
           <Input label="Name *" {...register("name", { required: "Required" })} error={errors.name?.message} />
           <Input label="Flavor" {...register("flavor")} />
