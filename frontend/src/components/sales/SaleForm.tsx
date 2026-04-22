@@ -37,41 +37,33 @@ export function SaleForm({ open, onClose, product: preProduct }: Props) {
   return (
     <Modal open={open} onClose={onClose} title="Record Sale">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Product *</label>
-          <select
-            {...register("_product_id_str", { required: "Required" })}
-            className="block w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          >
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-semibold text-gray-600">Product *</label>
+          <select {...register("_product_id_str", { required: "Required" })}
+            className="w-full rounded border border-gray-300 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-400">
             <option value="">Select a product…</option>
-            {products.map((p) => (
-              <option key={p.id} value={p.id}>{p.brand} — {p.name} (stock: {p.stock_quantity})</option>
-            ))}
+            {products.map((p) => <option key={p.id} value={p.id}>{p.brand} — {p.name} (stock: {p.stock_quantity})</option>)}
           </select>
           {errors._product_id_str && <p className="text-xs text-red-600">{errors._product_id_str.message}</p>}
         </div>
 
         {selected && (
-          <div className="rounded-lg p-3 bg-slate-50 border border-slate-200 text-sm space-y-0.5">
-            <p className="text-slate-600">Price: <strong className="text-emerald-700">₱{Number(selected.price).toFixed(2)}</strong></p>
-            <p className="text-slate-600">Stock: <strong className={selected.is_low_stock ? "text-red-600" : "text-slate-800"}>{selected.stock_quantity}</strong></p>
+          <div className="text-xs text-gray-500 bg-gray-50 rounded border border-gray-100 px-3 py-2 space-y-0.5">
+            <p>Price: ₱{Number(selected.price).toFixed(2)}</p>
+            <p>Stock: <span className={selected.is_low_stock ? "text-red-600 font-semibold" : ""}>{selected.stock_quantity}</span></p>
           </div>
         )}
 
         <Input label="Quantity *" type="number" min="1" max={selected?.stock_quantity}
-          {...register("quantity_sold", { required: "Required", min: { value: 1, message: "Must be at least 1" } })}
+          {...register("quantity_sold", { required: "Required", min: { value: 1, message: "At least 1" } })}
           error={errors.quantity_sold?.message} />
 
-        <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Recorded by *</label>
-          <select
-            {...register("_partner_id_str", { required: "Required" })}
-            className="block w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          >
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-semibold text-gray-600">Recorded by *</label>
+          <select {...register("_partner_id_str", { required: "Required" })}
+            className="w-full rounded border border-gray-300 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-400">
             <option value="">Select partner…</option>
-            {partners.map((p) => (
-              <option key={p.id} value={p.id}>{p.name}</option>
-            ))}
+            {partners.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
           </select>
         </div>
 

@@ -8,23 +8,20 @@ export default function Reports() {
   const [toDate, setToDate] = useState("");
 
   return (
-    <div className="space-y-8 max-w-7xl">
-      <div>
-        <h1 className="text-2xl font-black text-slate-900 tracking-tight">Reports</h1>
-        <p className="text-sm text-slate-500 mt-0.5">Inventory and sales insights</p>
-      </div>
+    <div className="max-w-7xl space-y-8">
+      <h1 className="text-xl font-bold text-gray-900">Reports</h1>
 
       <section className="space-y-3">
-        <h2 className="text-base font-bold text-slate-800">Inventory</h2>
+        <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Inventory</h2>
         <InventorySummary />
       </section>
 
       <section className="space-y-3">
         <div className="flex items-end gap-4 flex-wrap">
-          <h2 className="text-base font-bold text-slate-800">Sales History</h2>
+          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Sales History</h2>
           <div className="flex items-end gap-2 ml-auto">
-            <Input label="From" type="datetime-local" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="text-xs" />
-            <Input label="To" type="datetime-local" value={toDate} onChange={(e) => setToDate(e.target.value)} className="text-xs" />
+            <Input label="From" type="datetime-local" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
+            <Input label="To" type="datetime-local" value={toDate} onChange={(e) => setToDate(e.target.value)} />
           </div>
         </div>
         <SalesHistory

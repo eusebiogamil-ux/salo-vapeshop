@@ -9,26 +9,19 @@ export default function Sales() {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="space-y-5 max-w-7xl">
+    <div className="max-w-7xl space-y-5">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight">Sales</h1>
-          <p className="text-sm text-slate-500 mt-0.5">{sales.length} transaction{sales.length !== 1 ? "s" : ""} recorded</p>
+          <h1 className="text-xl font-bold text-gray-900">Sales</h1>
+          <p className="text-xs text-gray-400 mt-0.5">{sales.length} transaction{sales.length !== 1 ? "s" : ""}</p>
         </div>
-        <button
-          onClick={() => setOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-emerald-600 text-white hover:bg-emerald-700 transition-colors shadow-sm"
-        >
-          <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Record Sale
+        <button onClick={() => setOpen(true)}
+          className="px-3 py-1.5 rounded border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+          + Record Sale
         </button>
       </div>
 
-      {isLoading
-        ? <Spinner className="w-8 h-8 mx-auto mt-16" />
-        : <SalesTable sales={sales} />
-      }
-
+      {isLoading ? <Spinner className="w-6 h-6 mx-auto mt-16" /> : <SalesTable sales={sales} />}
       <SaleForm open={open} onClose={() => setOpen(false)} />
     </div>
   );

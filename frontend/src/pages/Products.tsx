@@ -13,27 +13,21 @@ export default function Products() {
   const [saleProduct, setSaleProduct] = useState<Product | null>(null);
 
   return (
-    <div className="space-y-5 max-w-7xl">
+    <div className="max-w-7xl space-y-5">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight">Products</h1>
-          <p className="text-sm text-slate-500 mt-0.5">{products.length} product{products.length !== 1 ? "s" : ""} in inventory</p>
+          <h1 className="text-xl font-bold text-gray-900">Products</h1>
+          <p className="text-xs text-gray-400 mt-0.5">{products.length} item{products.length !== 1 ? "s" : ""}</p>
         </div>
-        <button
-          onClick={() => setAddOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-indigo-600 text-white hover:bg-indigo-700 transition-colors shadow-sm"
-        >
-          <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Add Product
+        <button onClick={() => setAddOpen(true)}
+          className="px-3 py-1.5 rounded border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+          + Add Product
         </button>
       </div>
 
       <LowStockBanner products={products} />
 
-      {isLoading
-        ? <Spinner className="w-8 h-8 mx-auto mt-16" />
-        : <ProductTable products={products} onLogSale={(p) => setSaleProduct(p)} />
-      }
+      {isLoading ? <Spinner className="w-6 h-6 mx-auto mt-16" /> : <ProductTable products={products} onLogSale={(p) => setSaleProduct(p)} />}
 
       <ProductForm open={addOpen} onClose={() => setAddOpen(false)} />
       <SaleForm open={!!saleProduct} onClose={() => setSaleProduct(null)} product={saleProduct} />
