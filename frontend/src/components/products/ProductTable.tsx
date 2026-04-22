@@ -7,7 +7,7 @@ import type { Product } from "../../api/products";
 
 interface Props { products: Product[]; onLogSale: (product: Product) => void; }
 
-const TH = ({ children }: { children: React.ReactNode }) => (
+const TH = ({ children }: { children?: React.ReactNode }) => (
   <th className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-widest whitespace-nowrap" style={{ color: "#475569" }}>{children}</th>
 );
 

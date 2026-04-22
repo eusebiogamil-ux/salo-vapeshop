@@ -55,7 +55,7 @@ export function PartnersCard() {
         </span>
       </div>
 
-      <div className="divide-y" style={{ divideColor: "#1a2234" }}>
+      <div className="divide-y divide-slate-800"style={{ borderColor: "#1a2234" }}>
         {partners.map((p, i) => (
           <div key={p.id} className="flex items-center gap-3 px-4 md:px-6 py-4 transition-colors hover:bg-white/[0.02]" style={{ borderColor: "#1a2234", borderTopWidth: i > 0 ? 1 : 0 }}>
             <div className={`w-9 h-9 md:w-10 md:h-10 rounded-full bg-gradient-to-br ${avatarGradients[i % avatarGradients.length]} flex items-center justify-center text-white font-black text-sm shrink-0 shadow-lg`}>

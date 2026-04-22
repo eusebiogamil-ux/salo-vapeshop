@@ -5,6 +5,10 @@ export interface DashboardStats {
   total_stock_value: number;
   today_revenue: number;
   low_stock_count: number;
+  cash_on_hand: number;
+  total_capital: number;
+  total_revenue: number;
+  total_spent: number;
 }
 
 export interface InventoryRow {
