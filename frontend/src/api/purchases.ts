@@ -7,6 +7,7 @@ export interface Purchase {
   product_brand: string | null;
   quantity: number;
   unit_cost: number;
+  shipping_fee: number;
   total_cost: number;
   notes: string | null;
   purchased_at: string;
@@ -16,6 +17,7 @@ export interface PurchaseCreate {
   product_id?: number;
   quantity: number;
   unit_cost: number;
+  shipping_fee?: number;
   notes?: string;
 }
 

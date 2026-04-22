@@ -17,13 +17,10 @@ export function ProductForm({ open, onClose, product }: Props) {
   const create = useCreateProduct();
   const update = useUpdateProduct();
   const pending = create.isPending || update.isPending;
-
   const { register, handleSubmit, reset, formState: { errors } } = useForm<ProductCreate>();
 
   useEffect(() => {
-    if (open) {
-      reset(product ?? { stock_quantity: 0, low_stock_threshold: 5 });
-    }
+    if (open) reset(product ?? { stock_quantity: 0, low_stock_threshold: 5 });
   }, [open, product, reset]);
 
   const onSubmit = async (data: ProductCreate) => {
@@ -34,11 +31,8 @@ export function ProductForm({ open, onClose, product }: Props) {
       stock_quantity: Number(data.stock_quantity),
       low_stock_threshold: Number(data.low_stock_threshold),
     };
-    if (isEdit) {
-      await update.mutateAsync({ id: product!.id, data: payload });
-    } else {
-      await create.mutateAsync(payload);
-    }
+    if (isEdit) await update.mutateAsync({ id: product!.id, data: payload });
+    else await create.mutateAsync(payload);
     onClose();
   };
 
@@ -47,20 +41,20 @@ export function ProductForm({ open, onClose, product }: Props) {
   return (
     <Modal open={open} onClose={onClose} title={isEdit ? "Edit Product" : "Add Product"} wide>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
-          <Input label="Name *" {...register("name", { required: "Required" })} error={errors.name?.message} />
+        <div className="grid grid-cols-2 gap-3">
           <Input label="Brand *" {...register("brand", { required: "Required" })} error={errors.brand?.message} />
+          <Input label="Name *" {...register("name", { required: "Required" })} error={errors.name?.message} />
           <Input label="Flavor" {...register("flavor")} />
-          <Input label="Nicotine Strength" placeholder="e.g. 3mg" {...register("nicotine_strength")} />
+          <Input label="Nicotine" placeholder="e.g. 3mg" {...register("nicotine_strength")} />
           <Input label="Size" placeholder="e.g. 60ml" {...register("size")} />
           <div />
           <Input label="Sell Price (₱) *" type="number" step="0.01" min="0" {...register("price", { required: "Required" })} error={errors.price?.message} />
           <Input label="Cost Price (₱) *" type="number" step="0.01" min="0" {...register("cost_price", { required: "Required" })} error={errors.cost_price?.message} />
-          <Input label="Stock Quantity *" type="number" min="0" {...register("stock_quantity", { required: "Required" })} error={errors.stock_quantity?.message} />
-          <Input label="Low Stock Threshold" type="number" min="0" {...register("low_stock_threshold")} />
+          <Input label="Stock Qty *" type="number" min="0" {...register("stock_quantity", { required: "Required" })} error={errors.stock_quantity?.message} />
+          <Input label="Low Stock Alert" type="number" min="0" {...register("low_stock_threshold")} />
         </div>
-        {error && <p className="text-sm text-red-400">{(error as any).response?.data?.detail ?? "An error occurred"}</p>}
-        <div className="flex justify-end gap-2 pt-2">
+        {error && <p className="text-sm text-red-600">{(error as any).response?.data?.detail ?? "An error occurred"}</p>}
+        <div className="flex justify-end gap-2 pt-1">
           <Button type="button" variant="secondary" onClick={onClose}>Cancel</Button>
           <Button type="submit" loading={pending}>{isEdit ? "Save Changes" : "Add Product"}</Button>
         </div>

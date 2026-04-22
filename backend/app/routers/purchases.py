@@ -14,6 +14,7 @@ class PurchaseCreate(BaseModel):
     product_id: int | None = None
     quantity: int
     unit_cost: Decimal
+    shipping_fee: Decimal = Decimal("0")
     notes: str | None = None
 
 
@@ -29,6 +30,7 @@ def list_purchases(db: Session = Depends(get_db)):
             "product_brand": p.product.brand if p.product else None,
             "quantity": p.quantity,
             "unit_cost": float(p.unit_cost),
+            "shipping_fee": float(p.shipping_fee),
             "total_cost": float(p.total_cost),
             "notes": p.notes,
             "purchased_at": p.purchased_at.isoformat(),
@@ -38,9 +40,9 @@ def list_purchases(db: Session = Depends(get_db)):
 
 @router.post("", status_code=201)
 def create_purchase(data: PurchaseCreate, db: Session = Depends(get_db)):
-    total = data.quantity * data.unit_cost
+    shipping = data.shipping_fee or Decimal("0")
+    total = data.quantity * data.unit_cost + shipping
 
-    # If linked to a product, add to stock
     if data.product_id:
         product = db.query(Product).filter(Product.id == data.product_id).first()
         if not product:
@@ -51,6 +53,7 @@ def create_purchase(data: PurchaseCreate, db: Session = Depends(get_db)):
         product_id=data.product_id,
         quantity=data.quantity,
         unit_cost=data.unit_cost,
+        shipping_fee=shipping,
         total_cost=total,
         notes=data.notes,
     )
@@ -63,6 +66,7 @@ def create_purchase(data: PurchaseCreate, db: Session = Depends(get_db)):
         "product_id": purchase.product_id,
         "quantity": purchase.quantity,
         "unit_cost": float(purchase.unit_cost),
+        "shipping_fee": float(purchase.shipping_fee),
         "total_cost": float(purchase.total_cost),
         "notes": purchase.notes,
         "purchased_at": purchase.purchased_at.isoformat(),
@@ -75,7 +79,6 @@ def void_purchase(purchase_id: int, db: Session = Depends(get_db)):
     if not purchase:
         raise HTTPException(status_code=404, detail="Purchase not found")
 
-    # Reverse stock if linked to product
     if purchase.product_id:
         product = db.query(Product).filter(Product.id == purchase.product_id).first()
         if product:

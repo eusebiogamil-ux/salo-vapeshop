@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
 from .routers import products, sales, reports, partners, purchases
 from .database import engine, Base
 import app.models  # noqa: F401 — ensures all models are registered
@@ -16,6 +17,12 @@ app.add_middleware(
 @app.on_event("startup")
 def create_tables():
     Base.metadata.create_all(bind=engine)
+    # Safe column migrations (IF NOT EXISTS = safe to run every startup)
+    with engine.connect() as conn:
+        conn.execute(text(
+            "ALTER TABLE purchases ADD COLUMN IF NOT EXISTS shipping_fee NUMERIC(10,2) NOT NULL DEFAULT 0"
+        ))
+        conn.commit()
 
 app.include_router(products.router)
 app.include_router(sales.router)

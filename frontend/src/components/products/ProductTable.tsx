@@ -8,7 +8,7 @@ import type { Product } from "../../api/products";
 interface Props { products: Product[]; onLogSale: (product: Product) => void; }
 
 const TH = ({ children }: { children?: React.ReactNode }) => (
-  <th className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-widest whitespace-nowrap" style={{ color: "#475569" }}>{children}</th>
+  <th className="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500 whitespace-nowrap bg-slate-50">{children}</th>
 );
 
 export function ProductTable({ products, onLogSale }: Props) {
@@ -17,43 +17,43 @@ export function ProductTable({ products, onLogSale }: Props) {
 
   return (
     <>
-      <div className="rounded-2xl border overflow-hidden" style={{ borderColor: "#1e293b" }}>
+      <div className="rounded-xl border border-slate-200 overflow-hidden bg-white shadow-sm">
         <div className="overflow-x-auto">
-        <table className="min-w-full divide-y text-sm" style={{ borderColor: "#1e293b" }}>
-          <thead style={{ background: "#0d1424" }}>
-            <tr>
-              <TH>Brand</TH><TH>Name</TH><TH>Flavor</TH><TH>Nic</TH><TH>Size</TH>
-              <TH>Price</TH><TH>Cost</TH><TH>Stock</TH><TH></TH>
-            </tr>
-          </thead>
-          <tbody style={{ background: "#0a0e1a" }}>
-            {products.length === 0 && (
-              <tr><td colSpan={9} className="px-4 py-12 text-center text-slate-600 text-base">No products yet. Add your first product!</td></tr>
-            )}
-            {products.map((p) => (
-              <tr key={p.id} className="border-t transition-colors hover:bg-white/[0.02]" style={{ borderColor: "#1a2234" }}>
-                <td className="px-4 py-3 font-bold text-slate-200 whitespace-nowrap">{p.brand}</td>
-                <td className="px-4 py-3 text-slate-300 whitespace-nowrap">{p.name}</td>
-                <td className="px-4 py-3 text-slate-500">{p.flavor ?? "—"}</td>
-                <td className="px-4 py-3 text-slate-500 whitespace-nowrap">{p.nicotine_strength ?? "—"}</td>
-                <td className="px-4 py-3 text-slate-500">{p.size ?? "—"}</td>
-                <td className="px-4 py-3 font-semibold text-emerald-400">₱{Number(p.price).toFixed(2)}</td>
-                <td className="px-4 py-3 text-slate-500">₱{Number(p.cost_price).toFixed(2)}</td>
-                <td className="px-4 py-3 whitespace-nowrap">
-                  <span className={`font-bold mr-2 ${p.is_low_stock ? "text-red-400" : "text-slate-300"}`}>{p.stock_quantity}</span>
-                  {p.is_low_stock && <Badge variant="red">Low</Badge>}
-                </td>
-                <td className="px-4 py-3">
-                  <div className="flex gap-1.5 justify-end">
-                    <Button size="sm" variant="ghost" onClick={() => onLogSale(p)}>Sale</Button>
-                    <Button size="sm" variant="secondary" onClick={() => setEditing(p)}>Edit</Button>
-                    <Button size="sm" variant="danger" onClick={() => { if (confirm(`Delete "${p.name}"?`)) del.mutate(p.id); }}>Del</Button>
-                  </div>
-                </td>
+          <table className="min-w-full text-sm">
+            <thead>
+              <tr className="border-b border-slate-100">
+                <TH>Brand</TH><TH>Name</TH><TH>Flavor</TH><TH>Nic</TH><TH>Size</TH>
+                <TH>Price</TH><TH>Cost</TH><TH>Stock</TH><TH></TH>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {products.length === 0 && (
+                <tr><td colSpan={9} className="px-4 py-12 text-center text-slate-400">No products yet. Add your first product!</td></tr>
+              )}
+              {products.map((p, i) => (
+                <tr key={p.id} className={`hover:bg-slate-50 transition-colors ${i > 0 ? "border-t border-slate-100" : ""}`}>
+                  <td className="px-4 py-3 font-semibold text-slate-800 whitespace-nowrap">{p.brand}</td>
+                  <td className="px-4 py-3 text-slate-700 whitespace-nowrap">{p.name}</td>
+                  <td className="px-4 py-3 text-slate-500">{p.flavor ?? "—"}</td>
+                  <td className="px-4 py-3 text-slate-500 whitespace-nowrap">{p.nicotine_strength ?? "—"}</td>
+                  <td className="px-4 py-3 text-slate-500">{p.size ?? "—"}</td>
+                  <td className="px-4 py-3 font-semibold text-emerald-700">₱{Number(p.price).toFixed(2)}</td>
+                  <td className="px-4 py-3 text-slate-500">₱{Number(p.cost_price).toFixed(2)}</td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    <span className={`font-bold mr-2 ${p.is_low_stock ? "text-red-600" : "text-slate-800"}`}>{p.stock_quantity}</span>
+                    {p.is_low_stock && <Badge variant="red">Low</Badge>}
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex gap-1.5 justify-end">
+                      <Button size="sm" variant="ghost" onClick={() => onLogSale(p)}>Sale</Button>
+                      <Button size="sm" variant="secondary" onClick={() => setEditing(p)}>Edit</Button>
+                      <Button size="sm" variant="danger" onClick={() => { if (confirm(`Delete "${p.name}"?`)) del.mutate(p.id); }}>Del</Button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
       <ProductForm open={!!editing} onClose={() => setEditing(null)} product={editing} />

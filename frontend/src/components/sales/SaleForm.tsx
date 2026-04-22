@@ -9,21 +9,16 @@ import { usePartners } from "../../hooks/usePartners";
 import type { SaleCreate } from "../../api/sales";
 import type { Product } from "../../api/products";
 
-interface Props {
-  open: boolean;
-  onClose: () => void;
-  product?: Product | null;
-}
+interface Props { open: boolean; onClose: () => void; product?: Product | null; }
 
 export function SaleForm({ open, onClose, product: preProduct }: Props) {
   const { data: products = [] } = useProducts();
   const { data: partners = [] } = usePartners();
   const create = useCreateSale();
-
   const { register, handleSubmit, reset, watch, formState: { errors } } = useForm<SaleCreate & { _product_id_str: string; _partner_id_str: string }>();
 
   useEffect(() => {
-    if (open) reset({ product_id: preProduct?.id, _product_id_str: String(preProduct?.id ?? ""), quantity_sold: 1 });
+    if (open) reset({ _product_id_str: String(preProduct?.id ?? ""), quantity_sold: 1 });
   }, [open, preProduct, reset]);
 
   const selectedId = Number(watch("_product_id_str"));
@@ -39,47 +34,39 @@ export function SaleForm({ open, onClose, product: preProduct }: Props) {
     onClose();
   };
 
-  const error = create.error;
-
   return (
     <Modal open={open} onClose={onClose} title="Record Sale">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div className="flex flex-col gap-1">
-          <label className="text-xs font-bold uppercase tracking-widest" style={{ color: "#475569" }}>Product *</label>
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Product *</label>
           <select
             {...register("_product_id_str", { required: "Required" })}
-            className="block w-full rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            style={{ background: "#0d1424", border: "1px solid #1e293b", color: "#e2e8f0" }}
+            className="block w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
             <option value="">Select a product…</option>
             {products.map((p) => (
               <option key={p.id} value={p.id}>{p.brand} — {p.name} (stock: {p.stock_quantity})</option>
             ))}
           </select>
-          {errors._product_id_str && <p className="text-xs text-red-400">{errors._product_id_str.message}</p>}
+          {errors._product_id_str && <p className="text-xs text-red-600">{errors._product_id_str.message}</p>}
         </div>
 
         {selected && (
-          <div className="rounded-lg p-3 text-sm space-y-0.5" style={{ background: "#0f1929", border: "1px solid #1e293b" }}>
-            <p className="text-slate-400">Sell price: <strong className="text-emerald-400">₱{Number(selected.price).toFixed(2)}</strong></p>
-            <p className="text-slate-400">Available stock: <strong className={selected.is_low_stock ? "text-red-400" : "text-slate-200"}>{selected.stock_quantity}</strong></p>
+          <div className="rounded-lg p-3 bg-slate-50 border border-slate-200 text-sm space-y-0.5">
+            <p className="text-slate-600">Price: <strong className="text-emerald-700">₱{Number(selected.price).toFixed(2)}</strong></p>
+            <p className="text-slate-600">Stock: <strong className={selected.is_low_stock ? "text-red-600" : "text-slate-800"}>{selected.stock_quantity}</strong></p>
           </div>
         )}
 
-        <Input
-          label="Quantity *"
-          type="number"
-          min="1"
-          max={selected?.stock_quantity}
+        <Input label="Quantity *" type="number" min="1" max={selected?.stock_quantity}
           {...register("quantity_sold", { required: "Required", min: { value: 1, message: "Must be at least 1" } })}
-          error={errors.quantity_sold?.message}
-        />
-        <div className="flex flex-col gap-1">
-          <label className="text-xs font-bold uppercase tracking-widest" style={{ color: "#475569" }}>Recorded by *</label>
+          error={errors.quantity_sold?.message} />
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Recorded by *</label>
           <select
-            {...register("_partner_id_str", { required: "Please select a partner" })}
-            className="block w-full rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            style={{ background: "#0d1424", border: "1px solid #1e293b", color: "#e2e8f0" }}
+            {...register("_partner_id_str", { required: "Required" })}
+            className="block w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
             <option value="">Select partner…</option>
             {partners.map((p) => (
@@ -87,11 +74,12 @@ export function SaleForm({ open, onClose, product: preProduct }: Props) {
             ))}
           </select>
         </div>
+
         <Input label="Notes" placeholder="Optional" {...register("notes")} />
 
-        {error && <p className="text-sm text-red-400">{(error as any).response?.data?.detail ?? "An error occurred"}</p>}
+        {create.error && <p className="text-sm text-red-600">{(create.error as any).response?.data?.detail ?? "An error occurred"}</p>}
 
-        <div className="flex justify-end gap-2 pt-2">
+        <div className="flex justify-end gap-2 pt-1">
           <Button type="button" variant="secondary" onClick={onClose}>Cancel</Button>
           <Button type="submit" loading={create.isPending}>Record Sale</Button>
         </div>

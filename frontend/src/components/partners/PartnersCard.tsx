@@ -6,7 +6,7 @@ import { Modal } from "../ui/Modal";
 import { Input } from "../ui/Input";
 import type { Partner } from "../../api/partners";
 
-const avatarGradients = ["from-indigo-500 to-violet-600", "from-violet-500 to-purple-700", "from-cyan-500 to-blue-600"];
+const avatarColors = ["bg-indigo-500", "bg-violet-500", "bg-cyan-500", "bg-emerald-500"];
 
 function EditCapitalModal({ partner, onClose }: { partner: Partner; onClose: () => void }) {
   const [value, setValue] = useState(String(partner.capital));
@@ -36,42 +36,42 @@ export function PartnersCard() {
   const fairShare = partners.length > 0 ? totalProfit / partners.length : 0;
 
   return (
-    <div className="rounded-2xl border overflow-hidden" style={{ background: "#0a0e1a", borderColor: "#1e293b" }}>
-      <div className="px-6 py-4 border-b flex items-center justify-between" style={{ borderColor: "#1e293b", background: "#0d1424" }}>
+    <div className="rounded-xl border border-slate-200 overflow-hidden bg-white shadow-sm">
+      <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
         <div>
-          <h2 className="text-base font-bold text-slate-100">Partners</h2>
+          <h2 className="text-sm font-bold text-slate-800">Partners</h2>
           <p className="text-xs text-slate-500 mt-0.5">Equal profit share from all sales</p>
         </div>
         <div className="text-right">
-          <p className="text-xs text-slate-500">Total Capital</p>
-          <p className="text-base font-black text-slate-200">₱{totalCapital.toLocaleString("en-PH", { minimumFractionDigits: 2 })}</p>
+          <p className="text-[10px] text-slate-500 uppercase tracking-wide font-semibold">Total Capital</p>
+          <p className="text-base font-black text-slate-800">₱{totalCapital.toLocaleString("en-PH", { minimumFractionDigits: 2 })}</p>
         </div>
       </div>
 
-      <div className="px-6 py-3 border-b flex items-center justify-between" style={{ borderColor: "#1e293b", background: "#0f1929" }}>
-        <span className="text-xs font-semibold text-indigo-400 uppercase tracking-wide">Total Business Profit</span>
-        <span className={`text-base font-black ${totalProfit >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+      <div className="px-5 py-2.5 border-b border-slate-100 flex items-center justify-between">
+        <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Total Business Profit</span>
+        <span className={`text-base font-black ${totalProfit >= 0 ? "text-emerald-700" : "text-red-600"}`}>
           ₱{totalProfit.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
         </span>
       </div>
 
-      <div className="divide-y divide-slate-800"style={{ borderColor: "#1a2234" }}>
+      <div>
         {partners.map((p, i) => (
-          <div key={p.id} className="flex items-center gap-3 px-4 md:px-6 py-4 transition-colors hover:bg-white/[0.02]" style={{ borderColor: "#1a2234", borderTopWidth: i > 0 ? 1 : 0 }}>
-            <div className={`w-9 h-9 md:w-10 md:h-10 rounded-full bg-gradient-to-br ${avatarGradients[i % avatarGradients.length]} flex items-center justify-center text-white font-black text-sm shrink-0 shadow-lg`}>
+          <div key={p.id} className={`flex items-center gap-3 px-5 py-4 hover:bg-slate-50 transition-colors ${i > 0 ? "border-t border-slate-100" : ""}`}>
+            <div className={`w-9 h-9 rounded-full ${avatarColors[i % avatarColors.length]} flex items-center justify-center text-white font-black text-sm shrink-0`}>
               {p.name[0]}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-slate-200">{p.name}</p>
-              <p className="text-xs text-slate-600">Equal share</p>
+              <p className="text-sm font-bold text-slate-800">{p.name}</p>
+              <p className="text-xs text-slate-400">Equal share</p>
             </div>
-            <div className="text-right px-2">
-              <p className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Capital</p>
-              <p className="text-xs md:text-sm font-bold text-slate-300">₱{p.capital.toLocaleString("en-PH", { minimumFractionDigits: 2 })}</p>
+            <div className="text-right px-3">
+              <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">Capital</p>
+              <p className="text-sm font-bold text-slate-700">₱{p.capital.toLocaleString("en-PH", { minimumFractionDigits: 2 })}</p>
             </div>
-            <div className="text-right px-2">
-              <p className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Profit Share</p>
-              <p className={`text-xs md:text-sm font-black ${fairShare >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+            <div className="text-right px-3">
+              <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">Profit Share</p>
+              <p className={`text-sm font-black ${fairShare >= 0 ? "text-emerald-700" : "text-red-600"}`}>
                 ₱{fairShare.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
               </p>
             </div>
