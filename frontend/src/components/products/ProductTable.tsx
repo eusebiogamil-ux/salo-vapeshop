@@ -18,6 +18,7 @@ export function ProductTable({ products, onLogSale }: Props) {
   return (
     <>
       <div className="rounded-2xl border overflow-hidden" style={{ borderColor: "#1e293b" }}>
+        <div className="overflow-x-auto">
         <table className="min-w-full divide-y text-sm" style={{ borderColor: "#1e293b" }}>
           <thead style={{ background: "#0d1424" }}>
             <tr>
@@ -53,6 +54,7 @@ export function ProductTable({ products, onLogSale }: Props) {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
       <ProductForm open={!!editing} onClose={() => setEditing(null)} product={editing} />
     </>

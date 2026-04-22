@@ -13,6 +13,7 @@ export function SalesTable({ sales }: { sales: Sale[] }) {
 
   return (
     <div className="rounded-2xl border overflow-hidden" style={{ borderColor: "#1e293b" }}>
+      <div className="overflow-x-auto">
       <table className="min-w-full text-sm">
         <thead style={{ background: "#0d1424" }}>
           <tr>
@@ -49,6 +50,7 @@ export function SalesTable({ sales }: { sales: Sale[] }) {
           })}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }

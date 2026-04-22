@@ -28,6 +28,7 @@ export function SalesHistory({ fromDate, toDate }: Props) {
         <Button size="sm" variant="secondary" onClick={() => window.open(salesHistoryCsvUrl({ from_date: fromDate, to_date: toDate }), "_blank")}>Export CSV</Button>
       </div>
       <div className="rounded-2xl border overflow-hidden" style={{ borderColor: "#1e293b" }}>
+        <div className="overflow-x-auto">
         <table className="min-w-full text-sm">
           <thead style={{ background: "#0d1424" }}>
             <tr><TH>Brand</TH><TH>Product</TH><TH>Units Sold</TH><TH>Revenue</TH><TH>Cost</TH><TH>Profit</TH><TH>Margin</TH></tr>
@@ -49,6 +50,7 @@ export function SalesHistory({ fromDate, toDate }: Props) {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );

@@ -15,7 +15,7 @@ export default function Products() {
 
   return (
     <div className="space-y-5 max-w-7xl">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
         <div>
           <h1 className="text-3xl font-black text-slate-100 tracking-tight">Products</h1>
           <p className="text-sm text-slate-500 mt-1">{products.length} product{products.length !== 1 ? "s" : ""} in inventory</p>

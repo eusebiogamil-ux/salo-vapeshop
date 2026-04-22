@@ -38,8 +38,8 @@ export default function Dashboard() {
   const [purchaseOpen, setPurchaseOpen] = useState(false);
 
   return (
-    <div className="space-y-7 max-w-5xl">
-      <div className="flex items-start justify-between">
+    <div className="space-y-5 md:space-y-7 max-w-5xl">
+      <div className="flex items-start justify-between gap-3 flex-wrap">
         <div>
           <h1 className="text-3xl font-black text-slate-100 tracking-tight">Dashboard</h1>
           <p className="text-sm text-slate-500 mt-1">Welcome back — here's your business overview.</p>
@@ -52,7 +52,7 @@ export default function Dashboard() {
         </button>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
         {statsLoading ? <><StatSkeleton/><StatSkeleton/><StatSkeleton/><StatSkeleton/></> : <>
           <StatCard label="Total SKUs" value={stats?.total_skus ?? 0} sub="Active products"
             accent="linear-gradient(90deg,#6366f1,#8b5cf6)" iconBg="rgba(99,102,241,0.15)"
@@ -86,7 +86,7 @@ export default function Dashboard() {
             </div>
           )}
         </div>
-        <div className="grid grid-cols-3 divide-x" style={{ divideColor: "#1e293b" }}>
+        <div className="grid grid-cols-3 divide-x divide-slate-800">
           {[
             { label: "💼 Total Capital", value: stats?.total_capital ?? 0, color: "#818cf8" },
             { label: "📈 Total Revenue", value: stats?.total_revenue ?? 0, color: "#34d399" },
@@ -106,7 +106,7 @@ export default function Dashboard() {
 
       <LowStockBanner products={products} />
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
         {[
           { to: "/products", label: "Manage Products", sub: "Add, edit, track inventory", accent: "#4f46e5", iconBg: "rgba(79,70,229,0.15)",
             icon: <svg width="20" height="20" fill="none" stroke="#6366f1" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M21 8V21H3V8"/><path d="M23 3H1l2 5h18l2-5Z"/><path d="M10 12h4"/></svg> },

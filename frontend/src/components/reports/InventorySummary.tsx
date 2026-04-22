@@ -21,6 +21,7 @@ export function InventorySummary() {
         <Button size="sm" variant="secondary" onClick={() => window.open(inventoryCsvUrl(), "_blank")}>Export CSV</Button>
       </div>
       <div className="rounded-2xl border overflow-hidden" style={{ borderColor: "#1e293b" }}>
+        <div className="overflow-x-auto">
         <table className="min-w-full text-sm">
           <thead style={{ background: "#0d1424" }}>
             <tr><TH>Brand</TH><TH>Product</TH><TH>Nic</TH><TH>Size</TH><TH>Price</TH><TH>Stock</TH><TH>Stock Value</TH><TH>Cost Value</TH><TH>Margin</TH></tr>
@@ -45,6 +46,7 @@ export function InventorySummary() {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );

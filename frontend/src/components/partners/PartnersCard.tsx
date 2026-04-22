@@ -57,21 +57,21 @@ export function PartnersCard() {
 
       <div className="divide-y" style={{ divideColor: "#1a2234" }}>
         {partners.map((p, i) => (
-          <div key={p.id} className="flex items-center gap-4 px-6 py-4 transition-colors hover:bg-white/[0.02]" style={{ borderColor: "#1a2234", borderTopWidth: i > 0 ? 1 : 0 }}>
-            <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${avatarGradients[i % avatarGradients.length]} flex items-center justify-center text-white font-black text-sm shrink-0 shadow-lg`}>
+          <div key={p.id} className="flex items-center gap-3 px-4 md:px-6 py-4 transition-colors hover:bg-white/[0.02]" style={{ borderColor: "#1a2234", borderTopWidth: i > 0 ? 1 : 0 }}>
+            <div className={`w-9 h-9 md:w-10 md:h-10 rounded-full bg-gradient-to-br ${avatarGradients[i % avatarGradients.length]} flex items-center justify-center text-white font-black text-sm shrink-0 shadow-lg`}>
               {p.name[0]}
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-bold text-slate-200">{p.name}</p>
-              <p className="text-xs text-slate-600">Equal profit share</p>
+              <p className="text-xs text-slate-600">Equal share</p>
             </div>
-            <div className="text-right px-3">
+            <div className="text-right px-2">
               <p className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Capital</p>
-              <p className="text-sm font-bold text-slate-300">₱{p.capital.toLocaleString("en-PH", { minimumFractionDigits: 2 })}</p>
+              <p className="text-xs md:text-sm font-bold text-slate-300">₱{p.capital.toLocaleString("en-PH", { minimumFractionDigits: 2 })}</p>
             </div>
-            <div className="text-right px-3">
+            <div className="text-right px-2">
               <p className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">Profit Share</p>
-              <p className={`text-sm font-black ${fairShare >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+              <p className={`text-xs md:text-sm font-black ${fairShare >= 0 ? "text-emerald-400" : "text-red-400"}`}>
                 ₱{fairShare.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
               </p>
             </div>
