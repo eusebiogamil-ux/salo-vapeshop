@@ -9,6 +9,8 @@ from sqlalchemy.orm import Session
 from ..database import get_db
 from ..models.product import Product
 from ..models.sale import Sale
+from ..models.purchase import Purchase
+from ..models.partner import Partner
 
 router = APIRouter(prefix="/api/reports", tags=["reports"])
 
@@ -29,11 +31,21 @@ def dashboard_stats(db: Session = Depends(get_db)):
     today_start = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
     today_revenue = db.query(func.sum(Sale.quantity_sold * Sale.unit_price)).filter(Sale.sold_at >= today_start).scalar() or Decimal("0")
 
+    # Cashflow
+    total_capital = db.query(func.sum(Partner.capital)).scalar() or Decimal("0")
+    total_revenue = db.query(func.sum(Sale.quantity_sold * Sale.unit_price)).scalar() or Decimal("0")
+    total_spent = db.query(func.sum(Purchase.total_cost)).scalar() or Decimal("0")
+    cash_on_hand = float(total_capital) + float(total_revenue) - float(total_spent)
+
     return {
         "total_skus": total_skus,
         "total_stock_value": float(total_stock_value),
         "today_revenue": float(today_revenue),
         "low_stock_count": low_stock_count,
+        "cash_on_hand": round(cash_on_hand, 2),
+        "total_capital": float(total_capital),
+        "total_revenue": float(total_revenue),
+        "total_spent": float(total_spent),
     }
 
 
