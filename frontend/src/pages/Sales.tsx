@@ -10,14 +10,17 @@ export default function Sales() {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="space-y-4 max-w-7xl">
+    <div className="space-y-5 max-w-7xl">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Sales</h1>
+        <div>
+          <h1 className="text-3xl font-black text-gray-900 tracking-tight">Sales</h1>
+          <p className="text-base text-gray-500 mt-1">{sales.length} transaction{sales.length !== 1 ? "s" : ""} recorded</p>
+        </div>
         <Button onClick={() => setOpen(true)}>+ Record Sale</Button>
       </div>
 
       {isLoading ? (
-        <Spinner className="w-8 h-8 mx-auto mt-16" />
+        <Spinner className="w-10 h-10 mx-auto mt-20" />
       ) : (
         <SalesTable sales={sales} />
       )}
