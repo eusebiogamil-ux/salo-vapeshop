@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import { Logo } from "./Logo";
 
 const links = [
   { to: "/", label: "Dashboard", end: true },
@@ -10,9 +11,8 @@ const links = [
 export function Sidebar() {
   return (
     <aside className="w-48 shrink-0 flex flex-col bg-white border-r border-gray-200">
-      <div className="px-5 py-4 border-b border-gray-100">
-        <p className="font-black text-gray-900 text-base tracking-tight">Salo Vapeshop</p>
-        <p className="text-xs text-gray-400 mt-0.5">Inventory</p>
+      <div className="px-4 py-4 border-b border-gray-100">
+        <Logo />
       </div>
       <nav className="flex-1 px-3 py-3 space-y-0.5">
         {links.map((l) => (
