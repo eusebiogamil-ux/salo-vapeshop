@@ -30,11 +30,16 @@ def dashboard_stats(db: Session = Depends(get_db)):
 
     today_start = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
     today_revenue = db.query(func.sum(Sale.quantity_sold * Sale.unit_price)).filter(Sale.sold_at >= today_start).scalar() or Decimal("0")
+    today_units = db.query(func.sum(Sale.quantity_sold)).filter(Sale.sold_at >= today_start).scalar() or 0
+    today_cost = db.query(func.sum(Sale.quantity_sold * Sale.unit_cost)).filter(Sale.sold_at >= today_start).scalar() or Decimal("0")
 
-    # Cashflow
+    # All-time totals
+    total_units = db.query(func.sum(Sale.quantity_sold)).scalar() or 0
     total_capital = db.query(func.sum(Partner.capital)).scalar() or Decimal("0")
     total_revenue = db.query(func.sum(Sale.quantity_sold * Sale.unit_price)).scalar() or Decimal("0")
+    total_cost = db.query(func.sum(Sale.quantity_sold * Sale.unit_cost)).scalar() or Decimal("0")
     total_spent = db.query(func.sum(Purchase.total_cost)).scalar() or Decimal("0")
+    gross_profit = float(total_revenue) - float(total_cost)
     cash_on_hand = float(total_capital) + float(total_revenue) - float(total_spent)
 
     # Uncollected cash (utang)
@@ -45,10 +50,15 @@ def dashboard_stats(db: Session = Depends(get_db)):
         "total_skus": total_skus,
         "total_stock_value": float(total_stock_value),
         "today_revenue": float(today_revenue),
+        "today_units": int(today_units),
+        "today_gross_profit": round(float(today_revenue) - float(today_cost), 2),
+        "total_units": int(total_units),
         "low_stock_count": low_stock_count,
         "cash_on_hand": round(cash_on_hand, 2),
         "total_capital": float(total_capital),
         "total_revenue": float(total_revenue),
+        "total_cost": float(total_cost),
+        "gross_profit": round(gross_profit, 2),
         "total_spent": float(total_spent),
         "total_receivable": float(uncollected),
         "unpaid_count": int(uncollected_count),

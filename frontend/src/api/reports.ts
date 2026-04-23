@@ -4,10 +4,15 @@ export interface DashboardStats {
   total_skus: number;
   total_stock_value: number;
   today_revenue: number;
+  today_units: number;
+  today_gross_profit: number;
+  total_units: number;
   low_stock_count: number;
   cash_on_hand: number;
   total_capital: number;
   total_revenue: number;
+  total_cost: number;
+  gross_profit: number;
   total_spent: number;
   total_receivable: number;
   unpaid_count: number;
