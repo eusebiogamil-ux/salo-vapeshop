@@ -16,6 +16,7 @@ class PurchaseCreate(BaseModel):
     unit_cost: Decimal
     shipping_fee: Decimal = Decimal("0")
     notes: str | None = None
+    add_to_stock: bool = True
 
 
 class PurchaseUpdate(BaseModel):
@@ -54,7 +55,8 @@ def create_purchase(data: PurchaseCreate, db: Session = Depends(get_db)):
         product = db.query(Product).filter(Product.id == data.product_id).first()
         if not product:
             raise HTTPException(status_code=404, detail="Product not found")
-        product.stock_quantity += data.quantity
+        if data.add_to_stock:
+            product.stock_quantity += data.quantity
 
     purchase = Purchase(
         product_id=data.product_id,

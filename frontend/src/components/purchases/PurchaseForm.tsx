@@ -33,13 +33,14 @@ export function PurchaseForm({ open, onClose, purchase }: Props) {
               shipping_fee: purchase.shipping_fee,
               notes: purchase.notes ?? undefined,
             }
-          : { _product_id_str: "", quantity: undefined as any, unit_cost: undefined as any, shipping_fee: undefined as any, notes: undefined }
+          : { _product_id_str: "", quantity: undefined as any, unit_cost: undefined as any, shipping_fee: undefined as any, notes: undefined, add_to_stock: true }
       );
     }
   }, [open, purchase, reset]);
 
   const selectedId = Number(watch("_product_id_str"));
   const selected = products.find((p) => p.id === selectedId);
+  const addToStock = watch("add_to_stock");
   const qty = Number(watch("quantity")) || 0;
   const unitCost = Number(watch("unit_cost")) || 0;
   const shipping = Number(watch("shipping_fee")) || 0;
@@ -61,6 +62,7 @@ export function PurchaseForm({ open, onClose, purchase }: Props) {
         unit_cost: Number(data.unit_cost),
         shipping_fee: Number(data.shipping_fee) || 0,
         notes: data.notes || undefined,
+        add_to_stock: data.add_to_stock !== false,
       });
     }
     reset();
@@ -96,7 +98,21 @@ export function PurchaseForm({ open, onClose, purchase }: Props) {
             </select>
           )}
           {selected && !isEdit && (
-            <p className="text-xs text-gray-400">Stock will be added automatically</p>
+            <div className="mt-1 p-3 rounded border border-gray-200 bg-gray-50 space-y-2">
+              <div className="flex items-center gap-2">
+                <input type="checkbox" id="add_to_stock" defaultChecked
+                  {...register("add_to_stock")}
+                  className="w-4 h-4 rounded border-gray-300 cursor-pointer" />
+                <label htmlFor="add_to_stock" className="text-sm text-gray-700 cursor-pointer select-none font-medium">
+                  Add quantity to stock
+                </label>
+              </div>
+              <p className="text-xs text-gray-400 leading-snug">
+                {addToStock === false
+                  ? "Stock count will NOT change — use this if the product was already added to inventory when you created it."
+                  : "Stock will increase by the quantity you enter below."}
+              </p>
+            </div>
           )}
         </div>
 

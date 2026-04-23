@@ -19,6 +19,7 @@ export interface PurchaseCreate {
   unit_cost: number;
   shipping_fee?: number;
   notes?: string;
+  add_to_stock?: boolean;
 }
 
 export interface PurchaseUpdate {
