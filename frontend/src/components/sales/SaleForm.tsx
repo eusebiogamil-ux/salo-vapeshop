@@ -29,6 +29,7 @@ export function SaleForm({ open, onClose, product: preProduct }: Props) {
       product_id: Number(data._product_id_str),
       quantity_sold: Number(data.quantity_sold),
       partner_id: data._partner_id_str ? Number(data._partner_id_str) : undefined,
+      cash_collected: data.cash_collected !== false,
       notes: data.notes,
     });
     onClose();
@@ -68,6 +69,12 @@ export function SaleForm({ open, onClose, product: preProduct }: Props) {
         </div>
 
         <Input label="Notes" placeholder="Optional" {...register("notes")} />
+
+        <div className="flex items-center gap-2 py-1">
+          <input type="checkbox" id="cash_collected" defaultChecked {...register("cash_collected")}
+            className="w-4 h-4 rounded border-gray-300 text-gray-900 cursor-pointer" />
+          <label htmlFor="cash_collected" className="text-sm text-gray-700 cursor-pointer select-none">Cash collected</label>
+        </div>
 
         {create.error && <p className="text-sm text-red-600">{(create.error as any).response?.data?.detail ?? "An error occurred"}</p>}
 

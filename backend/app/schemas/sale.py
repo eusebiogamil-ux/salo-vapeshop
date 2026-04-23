@@ -7,6 +7,7 @@ class SaleCreate(BaseModel):
     product_id: int
     quantity_sold: int
     partner_id: int | None = None
+    cash_collected: bool = True
     notes: str | None = None
 
     @field_validator("quantity_sold")
@@ -28,6 +29,7 @@ class SaleResponse(BaseModel):
     total_revenue: Decimal
     total_cost: Decimal
     partner_id: int | None
+    cash_collected: bool
     notes: str | None
     sold_at: datetime
     created_at: datetime

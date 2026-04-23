@@ -44,6 +44,7 @@ def create_sale(db: Session, data: SaleCreate) -> Sale:
         unit_price=product.price,
         unit_cost=product.cost_price,
         partner_id=data.partner_id,
+        cash_collected=data.cash_collected,
         notes=data.notes,
     )
     product.stock_quantity -= data.quantity_sold

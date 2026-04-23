@@ -11,7 +11,6 @@ from ..models.product import Product
 from ..models.sale import Sale
 from ..models.purchase import Purchase
 from ..models.partner import Partner
-from ..models.credit import Credit
 
 router = APIRouter(prefix="/api/reports", tags=["reports"])
 
@@ -38,9 +37,9 @@ def dashboard_stats(db: Session = Depends(get_db)):
     total_spent = db.query(func.sum(Purchase.total_cost)).scalar() or Decimal("0")
     cash_on_hand = float(total_capital) + float(total_revenue) - float(total_spent)
 
-    # Receivables
-    total_receivable = db.query(func.sum(Credit.amount - Credit.amount_paid)).filter(Credit.is_settled == False).scalar() or Decimal("0")
-    unpaid_count = db.query(func.count(Credit.id)).filter(Credit.is_settled == False).scalar() or 0
+    # Uncollected cash (utang)
+    uncollected = db.query(func.sum(Sale.quantity_sold * Sale.unit_price)).filter(Sale.cash_collected == False).scalar() or Decimal("0")
+    uncollected_count = db.query(func.count(Sale.id)).filter(Sale.cash_collected == False).scalar() or 0
 
     return {
         "total_skus": total_skus,
@@ -51,8 +50,8 @@ def dashboard_stats(db: Session = Depends(get_db)):
         "total_capital": float(total_capital),
         "total_revenue": float(total_revenue),
         "total_spent": float(total_spent),
-        "total_receivable": float(total_receivable),
-        "unpaid_count": int(unpaid_count),
+        "total_receivable": float(uncollected),
+        "unpaid_count": int(uncollected_count),
     }
 
 

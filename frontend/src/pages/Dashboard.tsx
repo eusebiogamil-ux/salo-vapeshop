@@ -33,7 +33,7 @@ export default function Dashboard() {
           { label: "Stock Value", value: isLoading ? "—" : `₱${(stats?.total_stock_value ?? 0).toLocaleString("en-PH", { maximumFractionDigits: 0 })}`, sub: "inventory", link: null, warn: false },
           { label: "Today's Sales", value: isLoading ? "—" : `₱${(stats?.today_revenue ?? 0).toLocaleString("en-PH", { maximumFractionDigits: 0 })}`, sub: "revenue", link: null, warn: false },
           { label: "Low Stock", value: isLoading ? "—" : String(stats?.low_stock_count ?? 0), sub: "items", link: "/products", warn: !!(stats?.low_stock_count) },
-          { label: "Utang", value: isLoading ? "—" : `₱${(stats?.total_receivable ?? 0).toLocaleString("en-PH", { maximumFractionDigits: 0 })}`, sub: `${stats?.unpaid_count ?? 0} unpaid`, link: "/credits", warn: !!(stats?.total_receivable) },
+          { label: "Receivable", value: isLoading ? "—" : `₱${(stats?.total_receivable ?? 0).toLocaleString("en-PH", { maximumFractionDigits: 0 })}`, sub: `${stats?.unpaid_count ?? 0} unpaid`, link: "/sales", warn: !!(stats?.total_receivable) },
         ].map((s) => (
           s.link
             ? <Link key={s.label} to={s.link} className="bg-white border border-gray-200 rounded-lg px-4 py-3 hover:border-gray-300 transition-colors block">
