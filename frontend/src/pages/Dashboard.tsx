@@ -6,6 +6,7 @@ import { usePurchases, useVoidPurchase } from "../hooks/usePurchases";
 import { LowStockBanner } from "../components/products/LowStockBanner";
 import { PartnersCard } from "../components/partners/PartnersCard";
 import { PurchaseForm } from "../components/purchases/PurchaseForm";
+import type { Purchase } from "../api/purchases";
 
 function php(n: number, decimals = 0) {
   return "₱" + n.toLocaleString("en-PH", { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
@@ -39,6 +40,7 @@ export default function Dashboard() {
   const { data: purchases = [] } = usePurchases();
   const voidPurchase = useVoidPurchase();
   const [purchaseOpen, setPurchaseOpen] = useState(false);
+  const [editingPurchase, setEditingPurchase] = useState<Purchase | null>(null);
 
   const s = stats;
   const loading = isLoading || !s;
@@ -152,7 +154,7 @@ export default function Dashboard() {
                     {p.product_brand ? `${p.product_brand} — ${p.product_name}` : (p.notes || "General Purchase")}
                   </td>
                   <td className="px-5 py-2.5 text-gray-400 text-xs whitespace-nowrap">
-                    {p.quantity} units{p.shipping_fee > 0 ? ` · +₱${p.shipping_fee.toFixed(2)} ship` : ""}
+                    {p.quantity} units @ ₱{p.unit_cost.toFixed(2)}{p.shipping_fee > 0 ? ` · +₱${p.shipping_fee.toFixed(2)} ship` : ""}
                   </td>
                   <td className="px-5 py-2.5 text-gray-400 text-xs whitespace-nowrap">
                     {new Date(p.purchased_at).toLocaleDateString("en-PH", { month: "short", day: "numeric" })}
@@ -160,8 +162,9 @@ export default function Dashboard() {
                   <td className="px-5 py-2.5 font-semibold text-gray-800 text-right whitespace-nowrap">
                     ₱{p.total_cost.toLocaleString("en-PH", { minimumFractionDigits: 2 })}
                   </td>
-                  <td className="px-4 py-2.5">
-                    <button onClick={() => voidPurchase.mutate(p.id)} className="text-gray-300 hover:text-red-500 text-xs transition-colors">✕</button>
+                  <td className="px-4 py-2.5 whitespace-nowrap text-right">
+                    <button onClick={() => setEditingPurchase(p)} className="text-gray-400 hover:text-gray-700 text-xs mr-2 transition-colors">Edit</button>
+                    <button onClick={() => { if (confirm("Delete this purchase?")) voidPurchase.mutate(p.id); }} className="text-gray-300 hover:text-red-500 text-xs transition-colors">✕</button>
                   </td>
                 </tr>
               ))}
@@ -188,6 +191,7 @@ export default function Dashboard() {
       </div>
 
       <PurchaseForm open={purchaseOpen} onClose={() => setPurchaseOpen(false)} />
+      <PurchaseForm open={!!editingPurchase} purchase={editingPurchase} onClose={() => setEditingPurchase(null)} />
     </div>
   );
 }

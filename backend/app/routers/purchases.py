@@ -18,6 +18,13 @@ class PurchaseCreate(BaseModel):
     notes: str | None = None
 
 
+class PurchaseUpdate(BaseModel):
+    quantity: int
+    unit_cost: Decimal
+    shipping_fee: Decimal = Decimal("0")
+    notes: str | None = None
+
+
 @router.get("")
 def list_purchases(db: Session = Depends(get_db)):
     purchases = db.query(Purchase).order_by(Purchase.purchased_at.desc()).limit(100).all()
@@ -64,6 +71,41 @@ def create_purchase(data: PurchaseCreate, db: Session = Depends(get_db)):
     return {
         "id": purchase.id,
         "product_id": purchase.product_id,
+        "quantity": purchase.quantity,
+        "unit_cost": float(purchase.unit_cost),
+        "shipping_fee": float(purchase.shipping_fee),
+        "total_cost": float(purchase.total_cost),
+        "notes": purchase.notes,
+        "purchased_at": purchase.purchased_at.isoformat(),
+    }
+
+
+@router.patch("/{purchase_id}")
+def update_purchase(purchase_id: int, data: PurchaseUpdate, db: Session = Depends(get_db)):
+    purchase = db.query(Purchase).filter(Purchase.id == purchase_id).first()
+    if not purchase:
+        raise HTTPException(status_code=404, detail="Purchase not found")
+
+    qty_diff = data.quantity - purchase.quantity
+    if purchase.product_id and qty_diff != 0:
+        product = db.query(Product).filter(Product.id == purchase.product_id).first()
+        if product:
+            product.stock_quantity = max(0, product.stock_quantity + qty_diff)
+
+    shipping = data.shipping_fee or Decimal("0")
+    purchase.quantity = data.quantity
+    purchase.unit_cost = data.unit_cost
+    purchase.shipping_fee = shipping
+    purchase.total_cost = data.quantity * data.unit_cost + shipping
+    purchase.notes = data.notes
+    db.commit()
+    db.refresh(purchase)
+
+    return {
+        "id": purchase.id,
+        "product_id": purchase.product_id,
+        "product_name": purchase.product.name if purchase.product else None,
+        "product_brand": purchase.product.brand if purchase.product else None,
         "quantity": purchase.quantity,
         "unit_cost": float(purchase.unit_cost),
         "shipping_fee": float(purchase.shipping_fee),

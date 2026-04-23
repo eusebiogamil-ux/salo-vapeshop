@@ -21,11 +21,21 @@ export interface PurchaseCreate {
   notes?: string;
 }
 
+export interface PurchaseUpdate {
+  quantity: number;
+  unit_cost: number;
+  shipping_fee?: number;
+  notes?: string;
+}
+
 export const fetchPurchases = () =>
   client.get<Purchase[]>("/api/purchases").then((r) => r.data);
 
 export const createPurchase = (data: PurchaseCreate) =>
   client.post<Purchase>("/api/purchases", data).then((r) => r.data);
+
+export const updatePurchase = ({ id, ...data }: PurchaseUpdate & { id: number }) =>
+  client.patch<Purchase>(`/api/purchases/${id}`, data).then((r) => r.data);
 
 export const voidPurchase = (id: number) =>
   client.delete(`/api/purchases/${id}`);
