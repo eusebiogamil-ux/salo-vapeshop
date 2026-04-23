@@ -4,6 +4,7 @@ const links = [
   { to: "/", label: "Home", end: true },
   { to: "/products", label: "Products", end: false },
   { to: "/sales", label: "Sales", end: false },
+  { to: "/credits", label: "Utang", end: false },
   { to: "/reports", label: "Reports", end: false },
 ];
 
@@ -14,7 +15,7 @@ export function BottomNav() {
       {links.map((l) => (
         <NavLink key={l.to} to={l.to} end={l.end}
           className={({ isActive }) =>
-            `flex-1 py-3 text-center text-xs font-semibold transition-colors ${isActive ? "text-gray-900" : "text-gray-400"}`
+            `flex-1 py-3 text-center text-[10px] font-semibold transition-colors ${isActive ? "text-gray-900" : "text-gray-400"}`
           }>
           {l.label}
         </NavLink>

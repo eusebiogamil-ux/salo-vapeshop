@@ -27,17 +27,25 @@ export default function Dashboard() {
       </div>
 
       {/* Stats — plain row */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
         {[
-          { label: "Products", value: isLoading ? "—" : String(stats?.total_skus ?? 0) },
-          { label: "Stock Value", value: isLoading ? "—" : `₱${(stats?.total_stock_value ?? 0).toLocaleString("en-PH", { maximumFractionDigits: 0 })}` },
-          { label: "Today's Sales", value: isLoading ? "—" : `₱${(stats?.today_revenue ?? 0).toLocaleString("en-PH", { maximumFractionDigits: 0 })}` },
-          { label: "Low Stock", value: isLoading ? "—" : String(stats?.low_stock_count ?? 0), warn: !!(stats?.low_stock_count) },
+          { label: "Products", value: isLoading ? "—" : String(stats?.total_skus ?? 0), sub: "SKUs", link: null, warn: false },
+          { label: "Stock Value", value: isLoading ? "—" : `₱${(stats?.total_stock_value ?? 0).toLocaleString("en-PH", { maximumFractionDigits: 0 })}`, sub: "inventory", link: null, warn: false },
+          { label: "Today's Sales", value: isLoading ? "—" : `₱${(stats?.today_revenue ?? 0).toLocaleString("en-PH", { maximumFractionDigits: 0 })}`, sub: "revenue", link: null, warn: false },
+          { label: "Low Stock", value: isLoading ? "—" : String(stats?.low_stock_count ?? 0), sub: "items", link: "/products", warn: !!(stats?.low_stock_count) },
+          { label: "Utang", value: isLoading ? "—" : `₱${(stats?.total_receivable ?? 0).toLocaleString("en-PH", { maximumFractionDigits: 0 })}`, sub: `${stats?.unpaid_count ?? 0} unpaid`, link: "/credits", warn: !!(stats?.total_receivable) },
         ].map((s) => (
-          <div key={s.label} className="bg-white border border-gray-200 rounded-lg px-4 py-3">
-            <p className="text-xs text-gray-500 mb-1">{s.label}</p>
-            <p className={`text-2xl font-bold ${s.warn ? "text-red-600" : "text-gray-900"}`}>{s.value}</p>
-          </div>
+          s.link
+            ? <Link key={s.label} to={s.link} className="bg-white border border-gray-200 rounded-lg px-4 py-3 hover:border-gray-300 transition-colors block">
+                <p className="text-xs text-gray-500 mb-1">{s.label}</p>
+                <p className={`text-xl font-bold ${s.warn ? "text-red-600" : "text-gray-900"}`}>{s.value}</p>
+                {s.sub && <p className="text-xs text-gray-400 mt-0.5">{s.sub}</p>}
+              </Link>
+            : <div key={s.label} className="bg-white border border-gray-200 rounded-lg px-4 py-3">
+                <p className="text-xs text-gray-500 mb-1">{s.label}</p>
+                <p className="text-xl font-bold text-gray-900">{s.value}</p>
+                {s.sub && <p className="text-xs text-gray-400 mt-0.5">{s.sub}</p>}
+              </div>
         ))}
       </div>
 

@@ -9,6 +9,8 @@ export interface DashboardStats {
   total_capital: number;
   total_revenue: number;
   total_spent: number;
+  total_receivable: number;
+  unpaid_count: number;
 }
 
 export interface InventoryRow {
