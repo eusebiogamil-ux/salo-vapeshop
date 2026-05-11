@@ -12,3 +12,9 @@ services:
         value: production
       - key: CORS_ORIGINS
         sync: false
+      - key: ADMIN_USERNAME
+        value: salo
+      - key: ADMIN_PASSWORD
+        value: 3usebio07
+      - key: JWT_SECRET_KEY
+        value: salo-vapeshop-jwt-secret-2026
