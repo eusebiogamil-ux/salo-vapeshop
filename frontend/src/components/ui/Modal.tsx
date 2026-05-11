@@ -13,13 +13,16 @@ export function Modal({ open, onClose, title, children, wide }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4">
-      <div className="absolute inset-0 bg-black/30" onClick={onClose} />
-      <div className={`relative w-full ${wide ? "sm:max-w-2xl" : "sm:max-w-md"} max-h-[92vh] overflow-y-auto bg-white border border-gray-200 rounded-t-xl sm:rounded-xl shadow-lg`}>
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
-          <h2 className="text-sm font-bold text-gray-800">{title}</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none px-1">&times;</button>
+      <div className="absolute inset-0 bg-[#0a2540]/40 backdrop-blur-[2px]" onClick={onClose} />
+      <div
+        className={`relative w-full ${wide ? "sm:max-w-2xl" : "sm:max-w-md"} max-h-[92vh] overflow-y-auto bg-white rounded-t-2xl sm:rounded-2xl`}
+        style={{ boxShadow: "0 20px 60px rgba(10,37,64,0.18), 0 2px 8px rgba(10,37,64,0.06)" }}
+      >
+        <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: "1px solid #e3e8ef" }}>
+          <h2 className="text-sm font-semibold text-[#1a1f36]">{title}</h2>
+          <button onClick={onClose} className="text-[#a3acb9] hover:text-[#697386] text-xl leading-none w-7 h-7 flex items-center justify-center rounded-md hover:bg-[#f6f9fc] transition-colors">&times;</button>
         </div>
-        <div className="px-5 py-5">{children}</div>
+        <div className="px-6 py-5">{children}</div>
       </div>
     </div>
   );

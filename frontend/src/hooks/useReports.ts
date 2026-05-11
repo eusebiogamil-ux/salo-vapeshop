@@ -1,8 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchDashboardStats, fetchInventorySummary, fetchSalesHistory } from "../api/reports";
+import { fetchDashboardStats, fetchInventorySummary, fetchSalesHistory, fetchMonthlyPl } from "../api/reports";
 
-export function useDashboardStats() {
-  return useQuery({ queryKey: ["dashboard-stats"], queryFn: fetchDashboardStats, refetchInterval: 60_000 });
+export function useDashboardStats(params?: { from_date?: string; to_date?: string }) {
+  return useQuery({
+    queryKey: ["dashboard-stats", params],
+    queryFn: () => fetchDashboardStats(params),
+    refetchInterval: 60_000,
+  });
 }
 
 export function useInventorySummary() {
@@ -11,4 +15,8 @@ export function useInventorySummary() {
 
 export function useSalesHistory(params?: { from_date?: string; to_date?: string }) {
   return useQuery({ queryKey: ["sales-history", params], queryFn: () => fetchSalesHistory(params) });
+}
+
+export function useMonthlyPl() {
+  return useQuery({ queryKey: ["monthly-pl"], queryFn: fetchMonthlyPl });
 }

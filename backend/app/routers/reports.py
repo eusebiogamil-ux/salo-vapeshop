@@ -4,7 +4,7 @@ from datetime import datetime
 from decimal import Decimal
 from fastapi import APIRouter, Depends
 from fastapi.responses import StreamingResponse
-from sqlalchemy import func, case
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from ..database import get_db
 from ..models.product import Product
@@ -22,55 +22,117 @@ def _margin_pct(price: Decimal, cost: Decimal) -> float:
 
 
 @router.get("/dashboard-stats")
-def dashboard_stats(db: Session = Depends(get_db)):
+def dashboard_stats(
+    from_date: datetime | None = None,
+    to_date: datetime | None = None,
+    db: Session = Depends(get_db),
+):
     products = db.query(Product).filter(Product.is_active == True).all()
     total_skus = len(products)
     total_stock_value = sum(p.price * p.stock_quantity for p in products)
+    total_inventory_cost = sum(p.cost_price * p.stock_quantity for p in products)
     low_stock_count = sum(1 for p in products if p.stock_quantity <= p.low_stock_threshold)
 
+    # Today snapshot (always today regardless of period filter)
     today_start = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
     today_revenue = db.query(func.sum(Sale.quantity_sold * Sale.unit_price)).filter(Sale.sold_at >= today_start).scalar() or Decimal("0")
     today_units = db.query(func.sum(Sale.quantity_sold)).filter(Sale.sold_at >= today_start).scalar() or 0
     today_cost = db.query(func.sum(Sale.quantity_sold * Sale.unit_cost)).filter(Sale.sold_at >= today_start).scalar() or Decimal("0")
 
-    # All-time totals
-    total_units = db.query(func.sum(Sale.quantity_sold)).scalar() or 0
+    # All-time totals (always — used for cash on hand and balance sheet)
     total_capital = db.query(func.sum(Partner.capital)).scalar() or Decimal("0")
-    total_revenue = db.query(func.sum(Sale.quantity_sold * Sale.unit_price)).scalar() or Decimal("0")
-    total_cost = db.query(func.sum(Sale.quantity_sold * Sale.unit_cost)).scalar() or Decimal("0")
     total_spent = db.query(func.sum(Purchase.total_cost)).scalar() or Decimal("0")
-    gross_profit = float(total_revenue) - float(total_cost)
-    cash_on_hand = float(total_capital) + float(total_revenue) - float(total_spent)
+    atl_revenue = db.query(func.sum(Sale.quantity_sold * Sale.unit_price)).scalar() or Decimal("0")
+    atl_cost = db.query(func.sum(Sale.quantity_sold * Sale.unit_cost)).scalar() or Decimal("0")
+    atl_units = db.query(func.sum(Sale.quantity_sold)).scalar() or 0
+    atl_gross_profit = float(atl_revenue) - float(atl_cost)
+    cash_on_hand = float(total_capital) + float(atl_revenue)
 
-    # Uncollected cash (utang)
+    # Uncollected cash (always all-time)
     uncollected = db.query(func.sum(Sale.quantity_sold * Sale.unit_price)).filter(Sale.cash_collected == False).scalar() or Decimal("0")
     uncollected_count = db.query(func.count(Sale.id)).filter(Sale.cash_collected == False).scalar() or 0
 
+    # Period P&L (filtered when from_date/to_date provided, otherwise mirrors all-time)
+    pq_rev = db.query(func.sum(Sale.quantity_sold * Sale.unit_price))
+    pq_cost = db.query(func.sum(Sale.quantity_sold * Sale.unit_cost))
+    pq_units = db.query(func.sum(Sale.quantity_sold))
+    if from_date:
+        pq_rev = pq_rev.filter(Sale.sold_at >= from_date)
+        pq_cost = pq_cost.filter(Sale.sold_at >= from_date)
+        pq_units = pq_units.filter(Sale.sold_at >= from_date)
+    if to_date:
+        pq_rev = pq_rev.filter(Sale.sold_at <= to_date)
+        pq_cost = pq_cost.filter(Sale.sold_at <= to_date)
+        pq_units = pq_units.filter(Sale.sold_at <= to_date)
+
+    total_revenue = pq_rev.scalar() or Decimal("0")
+    total_cost = pq_cost.scalar() or Decimal("0")
+    total_units = pq_units.scalar() or 0
+    gross_profit = float(total_revenue) - float(total_cost)
+
     return {
+        # Inventory (always current)
         "total_skus": total_skus,
         "total_stock_value": float(total_stock_value),
+        "total_inventory_cost": float(total_inventory_cost),
+        "low_stock_count": low_stock_count,
+        # Capital & cash (always all-time)
+        "total_capital": float(total_capital),
+        "total_spent": float(total_spent),
+        "cash_on_hand": round(cash_on_hand, 2),
+        # Receivables (always all-time)
+        "total_receivable": float(uncollected),
+        "unpaid_count": int(uncollected_count),
+        # Today snapshot
         "today_revenue": float(today_revenue),
         "today_units": int(today_units),
         "today_gross_profit": round(float(today_revenue) - float(today_cost), 2),
-        "total_units": int(total_units),
-        "low_stock_count": low_stock_count,
-        "cash_on_hand": round(cash_on_hand, 2),
-        "total_capital": float(total_capital),
+        # All-time P&L (for balance sheet equity)
+        "atl_revenue": float(atl_revenue),
+        "atl_cost": float(atl_cost),
+        "atl_gross_profit": round(atl_gross_profit, 2),
+        "atl_units": int(atl_units),
+        # Period P&L (for KPI cards and income statement — filtered or all-time)
         "total_revenue": float(total_revenue),
         "total_cost": float(total_cost),
         "gross_profit": round(gross_profit, 2),
-        "total_spent": float(total_spent),
-        "total_receivable": float(uncollected),
-        "unpaid_count": int(uncollected_count),
+        "total_units": int(total_units),
     }
+
+
+@router.get("/monthly-pl")
+def monthly_pl(db: Session = Depends(get_db)):
+    rows = (
+        db.query(
+            func.extract("year", Sale.sold_at).label("year"),
+            func.extract("month", Sale.sold_at).label("month"),
+            func.sum(Sale.quantity_sold).label("units"),
+            func.sum(Sale.quantity_sold * Sale.unit_price).label("revenue"),
+            func.sum(Sale.quantity_sold * Sale.unit_cost).label("cogs"),
+        )
+        .group_by("year", "month")
+        .order_by(func.extract("year", Sale.sold_at).desc(), func.extract("month", Sale.sold_at).desc())
+        .all()
+    )
+    month_names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    return [
+        {
+            "year": int(r.year),
+            "month": int(r.month),
+            "label": f"{month_names[int(r.month) - 1]} {int(r.year)}",
+            "units": int(r.units or 0),
+            "revenue": float(r.revenue or 0),
+            "cogs": float(r.cogs or 0),
+            "gross_profit": round(float(r.revenue or 0) - float(r.cogs or 0), 2),
+        }
+        for r in rows
+    ]
 
 
 def _inventory_summary_data(db: Session) -> list[dict]:
     products = db.query(Product).filter(Product.is_active == True).order_by(Product.brand, Product.name).all()
     rows = []
     for p in products:
-        stock_value = float(p.price * p.stock_quantity)
-        cost_value = float(p.cost_price * p.stock_quantity)
         rows.append({
             "id": p.id,
             "name": p.name,
@@ -83,8 +145,8 @@ def _inventory_summary_data(db: Session) -> list[dict]:
             "stock_quantity": p.stock_quantity,
             "low_stock_threshold": p.low_stock_threshold,
             "is_low_stock": p.stock_quantity <= p.low_stock_threshold,
-            "stock_value": stock_value,
-            "cost_value": cost_value,
+            "stock_value": float(p.price * p.stock_quantity),
+            "cost_value": float(p.cost_price * p.stock_quantity),
             "margin_pct": _margin_pct(p.price, p.cost_price),
         })
     return rows

@@ -5,8 +5,24 @@
 
 @layer base {
   html { font-size: 14px; -webkit-font-smoothing: antialiased; }
-  body { font-family: 'Inter', system-ui, sans-serif; background: #f9fafb; color: #111827; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: #f6f9fc; color: #1a1f36; }
   * { font-family: 'Inter', system-ui, sans-serif; box-sizing: border-box; }
   ::-webkit-scrollbar { width: 4px; height: 4px; }
-  ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb { background: #c8d0db; border-radius: 4px; }
+}
+
+@media print {
+  /* Hide everything except main content */
+  aside, nav, .print\:hidden { display: none !important; }
+  /* Show print-only elements */
+  .print\:block { display: block !important; }
+  /* Reset layout */
+  body { background: #fff !important; color: #000 !important; font-size: 12px; }
+  main { padding: 0 !important; margin: 0 !important; overflow: visible !important; }
+  /* Cards look clean on paper */
+  [style*="boxShadow"], [style*="box-shadow"] { box-shadow: none !important; }
+  /* Ensure borders print */
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  /* Page margins */
+  @page { margin: 1.5cm; }
 }

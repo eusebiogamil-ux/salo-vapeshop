@@ -13,14 +13,15 @@ export default function Products() {
   const [saleProduct, setSaleProduct] = useState<Product | null>(null);
 
   return (
-    <div className="max-w-7xl space-y-5">
+    <div className="max-w-7xl space-y-6">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Products</h1>
-          <p className="text-xs text-gray-400 mt-0.5">{products.length} item{products.length !== 1 ? "s" : ""}</p>
+          <h1 className="text-xl font-bold" style={{ color: "#1a1f36" }}>Products</h1>
+          <p className="text-xs mt-0.5" style={{ color: "#a3acb9" }}>{products.length} item{products.length !== 1 ? "s" : ""}</p>
         </div>
         <button onClick={() => setAddOpen(true)}
-          className="px-3 py-1.5 rounded border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+          className="text-sm px-3.5 py-1.5 rounded-lg font-medium transition-colors"
+          style={{ background: "#635bff", color: "#ffffff", boxShadow: "0 1px 2px rgba(99,91,255,0.3)" }}>
           + Add Product
         </button>
       </div>

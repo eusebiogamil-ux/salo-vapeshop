@@ -9,14 +9,15 @@ export default function Sales() {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="max-w-7xl space-y-5">
+    <div className="max-w-7xl space-y-6">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div>
-          <h1 className="text-xl font-bold text-gray-900">Sales</h1>
-          <p className="text-xs text-gray-400 mt-0.5">{sales.length} transaction{sales.length !== 1 ? "s" : ""}</p>
+          <h1 className="text-xl font-bold" style={{ color: "#1a1f36" }}>Sales</h1>
+          <p className="text-xs mt-0.5" style={{ color: "#a3acb9" }}>{sales.length} transaction{sales.length !== 1 ? "s" : ""}</p>
         </div>
         <button onClick={() => setOpen(true)}
-          className="px-3 py-1.5 rounded border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+          className="text-sm px-3.5 py-1.5 rounded-lg font-medium transition-colors"
+          style={{ background: "#635bff", color: "#ffffff", boxShadow: "0 1px 2px rgba(99,91,255,0.3)" }}>
           + Record Sale
         </button>
       </div>
