@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchPurchases, createPurchase, updatePurchase, voidPurchase } from "../api/purchases";
+import { fetchPurchases, createPurchase, createBulkPurchase, updatePurchase, voidPurchase } from "../api/purchases";
 
 export const PURCHASES_KEY = ["purchases"] as const;
 
@@ -11,6 +11,18 @@ export function useCreatePurchase() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: createPurchase,
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: PURCHASES_KEY });
+      qc.invalidateQueries({ queryKey: ["dashboard-stats"] });
+      qc.invalidateQueries({ queryKey: ["products"] });
+    },
+  });
+}
+
+export function useCreateBulkPurchase() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: createBulkPurchase,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: PURCHASES_KEY });
       qc.invalidateQueries({ queryKey: ["dashboard-stats"] });

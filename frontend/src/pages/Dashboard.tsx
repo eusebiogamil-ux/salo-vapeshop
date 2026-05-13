@@ -6,6 +6,7 @@ import { useProducts } from "../hooks/useProducts";
 import { LowStockBanner } from "../components/products/LowStockBanner";
 import { PartnersCard } from "../components/partners/PartnersCard";
 import { SaleForm } from "../components/sales/SaleForm";
+import { BulkPurchaseForm } from "../components/purchases/BulkPurchaseForm";
 
 function php(n: number, decimals = 2) {
   return "₱" + n.toLocaleString("en-PH", { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
@@ -75,6 +76,7 @@ function FinCard({ title, subtitle, children }: { title: string; subtitle?: stri
 export default function Dashboard() {
   const [period, setPeriod] = useState<PeriodKey>("all");
   const [saleOpen, setSaleOpen] = useState(false);
+  const [purchaseOpen, setPurchaseOpen] = useState(false);
 
   const periodDates = getPeriodDates(period);
   const { data: stats, isLoading } = useDashboardStats(periodDates);
@@ -208,7 +210,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
           { to: "/sales",     label: "Sales Records" },
-          { to: "/purchases", label: "Purchases"     },
+          { to: "/purchases", label: "Purchases", action: () => setPurchaseOpen(true) },
           { to: "/products",  label: "Products"      },
           { to: "/reports",   label: "Reports"       },
         ].map((item) => (
@@ -221,6 +223,7 @@ export default function Dashboard() {
       </div>
 
       <SaleForm open={saleOpen} onClose={() => setSaleOpen(false)} />
+      <BulkPurchaseForm open={purchaseOpen} onClose={() => setPurchaseOpen(false)} />
     </div>
   );
 }

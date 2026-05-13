@@ -26,24 +26,38 @@ class PurchaseUpdate(BaseModel):
     notes: str | None = None
 
 
+class BulkItem(BaseModel):
+    product_id: int | None = None
+    quantity: int
+    unit_cost: Decimal
+    notes: str | None = None
+
+
+class BulkPurchaseCreate(BaseModel):
+    items: list[BulkItem]
+    shipping_fee: Decimal = Decimal("0")
+    order_notes: str | None = None
+
+
+def _serialize(p: Purchase) -> dict:
+    return {
+        "id": p.id,
+        "product_id": p.product_id,
+        "product_name": p.product.name if p.product else None,
+        "product_brand": p.product.brand if p.product else None,
+        "quantity": p.quantity,
+        "unit_cost": float(p.unit_cost),
+        "shipping_fee": float(p.shipping_fee),
+        "total_cost": float(p.total_cost),
+        "notes": p.notes,
+        "purchased_at": p.purchased_at.isoformat(),
+    }
+
+
 @router.get("")
 def list_purchases(db: Session = Depends(get_db)):
-    purchases = db.query(Purchase).order_by(Purchase.purchased_at.desc()).limit(100).all()
-    result = []
-    for p in purchases:
-        result.append({
-            "id": p.id,
-            "product_id": p.product_id,
-            "product_name": p.product.name if p.product else None,
-            "product_brand": p.product.brand if p.product else None,
-            "quantity": p.quantity,
-            "unit_cost": float(p.unit_cost),
-            "shipping_fee": float(p.shipping_fee),
-            "total_cost": float(p.total_cost),
-            "notes": p.notes,
-            "purchased_at": p.purchased_at.isoformat(),
-        })
-    return result
+    purchases = db.query(Purchase).order_by(Purchase.purchased_at.desc()).limit(200).all()
+    return [_serialize(p) for p in purchases]
 
 
 @router.post("", status_code=201)
@@ -69,17 +83,56 @@ def create_purchase(data: PurchaseCreate, db: Session = Depends(get_db)):
     db.add(purchase)
     db.commit()
     db.refresh(purchase)
+    return _serialize(purchase)
 
-    return {
-        "id": purchase.id,
-        "product_id": purchase.product_id,
-        "quantity": purchase.quantity,
-        "unit_cost": float(purchase.unit_cost),
-        "shipping_fee": float(purchase.shipping_fee),
-        "total_cost": float(purchase.total_cost),
-        "notes": purchase.notes,
-        "purchased_at": purchase.purchased_at.isoformat(),
-    }
+
+@router.post("/bulk", status_code=201)
+def create_bulk_purchase(data: BulkPurchaseCreate, db: Session = Depends(get_db)):
+    if not data.items:
+        raise HTTPException(status_code=400, detail="At least one item is required")
+
+    # Pre-validate all products exist
+    for item in data.items:
+        if item.product_id:
+            product = db.query(Product).filter(Product.id == item.product_id).first()
+            if not product:
+                raise HTTPException(status_code=404, detail=f"Product ID {item.product_id} not found")
+
+    # Calculate subtotals for proportional shipping split
+    subtotals = [item.quantity * item.unit_cost for item in data.items]
+    total_subtotal = sum(subtotals)
+
+    created = []
+    for item, subtotal in zip(data.items, subtotals):
+        # Split shipping proportionally by subtotal value
+        if total_subtotal > 0 and data.shipping_fee > 0:
+            item_shipping = (subtotal / total_subtotal) * data.shipping_fee
+        else:
+            item_shipping = Decimal("0")
+
+        item_total = subtotal + item_shipping
+
+        # Always add to stock automatically
+        if item.product_id:
+            product = db.query(Product).filter(Product.id == item.product_id).first()
+            product.stock_quantity += item.quantity
+
+        purchase = Purchase(
+            product_id=item.product_id,
+            quantity=item.quantity,
+            unit_cost=item.unit_cost,
+            shipping_fee=item_shipping,
+            total_cost=item_total,
+            notes=item.notes or data.order_notes,
+        )
+        db.add(purchase)
+        created.append(purchase)
+
+    db.commit()
+    for p in created:
+        db.refresh(p)
+
+    return {"created": len(created), "items": [_serialize(p) for p in created]}
 
 
 @router.patch("/{purchase_id}")
@@ -102,19 +155,7 @@ def update_purchase(purchase_id: int, data: PurchaseUpdate, db: Session = Depend
     purchase.notes = data.notes
     db.commit()
     db.refresh(purchase)
-
-    return {
-        "id": purchase.id,
-        "product_id": purchase.product_id,
-        "product_name": purchase.product.name if purchase.product else None,
-        "product_brand": purchase.product.brand if purchase.product else None,
-        "quantity": purchase.quantity,
-        "unit_cost": float(purchase.unit_cost),
-        "shipping_fee": float(purchase.shipping_fee),
-        "total_cost": float(purchase.total_cost),
-        "notes": purchase.notes,
-        "purchased_at": purchase.purchased_at.isoformat(),
-    }
+    return _serialize(purchase)
 
 
 @router.delete("/{purchase_id}", status_code=204)

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { usePurchases, useVoidPurchase } from "../hooks/usePurchases";
+import { BulkPurchaseForm } from "../components/purchases/BulkPurchaseForm";
 import { PurchaseForm } from "../components/purchases/PurchaseForm";
 import { Spinner } from "../components/ui/Spinner";
 import type { Purchase } from "../api/purchases";
@@ -135,7 +136,7 @@ export default function Purchases() {
         </div>
       )}
 
-      <PurchaseForm open={addOpen} onClose={() => setAddOpen(false)} />
+      <BulkPurchaseForm open={addOpen} onClose={() => setAddOpen(false)} />
       <PurchaseForm open={!!editing} purchase={editing} onClose={() => setEditing(null)} />
     </div>
   );
